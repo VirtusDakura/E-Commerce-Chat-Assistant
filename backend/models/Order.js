@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const orderItemSchema = new mongoose.Schema({
   product: {
@@ -214,4 +214,4 @@ orderSchema.methods.canBeCancelled = function () {
 
 const Order = mongoose.model('Order', orderSchema);
 
-module.exports = Order;
+export default Order;

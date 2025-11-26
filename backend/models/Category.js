@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema(
   {
@@ -174,4 +174,4 @@ categorySchema.statics.getFeaturedCategories = async function () {
 
 const Category = mongoose.model('Category', categorySchema);
 
-module.exports = Category;
+export default Category;

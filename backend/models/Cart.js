@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const cartItemSchema = new mongoose.Schema({
   product: {
@@ -184,4 +184,4 @@ cartSchema.methods.validateInventory = async function () {
 
 const Cart = mongoose.model('Cart', cartSchema);
 
-module.exports = Cart;
+export default Cart;

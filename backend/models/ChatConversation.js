@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema({
   role: {
@@ -221,4 +221,4 @@ chatConversationSchema.pre('save', function (next) {
 
 const ChatConversation = mongoose.model('ChatConversation', chatConversationSchema);
 
-module.exports = ChatConversation;
+export default ChatConversation;
