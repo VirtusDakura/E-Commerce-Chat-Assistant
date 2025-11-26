@@ -1,5 +1,5 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
 
 const app = express();
 
@@ -65,4 +65,4 @@ app.use((err, req, res, _next) => {
   });
 });
 
-module.exports = app;
+export default app;

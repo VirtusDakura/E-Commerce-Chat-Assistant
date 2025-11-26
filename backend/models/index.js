@@ -1,15 +1,8 @@
-const User = require('./User');
-const Product = require('./Product');
-const Category = require('./Category');
-const Cart = require('./Cart');
-const Order = require('./Order');
-const ChatConversation = require('./ChatConversation');
+import User from './User.js';
+import Product from './Product.js';
+import Category from './Category.js';
+import Cart from './Cart.js';
+import Order from './Order.js';
+import ChatConversation from './ChatConversation.js';
 
-module.exports = {
-  User,
-  Product,
-  Category,
-  Cart,
-  Order,
-  ChatConversation,
-};
+export { User, Product, Category, Cart, Order, ChatConversation };
