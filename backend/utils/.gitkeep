@@ -1,0 +1,4 @@
+// Utility/helper functions
+// Example: exports.sendEmail = (to, subject, body) => { ... }
+
+// Utils will be added here as we build features
