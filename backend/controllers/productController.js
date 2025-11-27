@@ -262,3 +262,197 @@ export const getFeaturedProducts = async (req, res) => {
     });
   }
 };
+
+// @desc    Create product review
+// @route   POST /api/products/:id/reviews
+// @access  Private
+export const createReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+
+    if (!rating || !comment) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide rating and comment',
+      });
+    }
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rating must be between 1 and 5',
+      });
+    }
+
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    // Check if user already reviewed this product
+    const alreadyReviewed = product.reviews.find(
+      (review) => review.user.toString() === req.user._id.toString(),
+    );
+
+    if (alreadyReviewed) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already reviewed this product',
+      });
+    }
+
+    // Add review
+    const review = {
+      user: req.user._id,
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+    };
+
+    product.reviews.push(review);
+
+    // Update rating and numReviews
+    product.numReviews = product.reviews.length;
+    product.rating =
+      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+      product.reviews.length;
+
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Review added successfully',
+      data: product,
+    });
+  } catch (error) {
+    console.error('Create review error:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format',
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error creating review',
+    });
+  }
+};
+
+// @desc    Get product reviews
+// @route   GET /api/products/:id/reviews
+// @access  Public
+export const getProductReviews = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+      .select('reviews rating numReviews')
+      .populate('reviews.user', 'name');
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: product.reviews.length,
+      rating: product.rating,
+      data: product.reviews,
+    });
+  } catch (error) {
+    console.error('Get reviews error:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format',
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error fetching reviews',
+    });
+  }
+};
+
+// @desc    Delete product review
+// @route   DELETE /api/products/:productId/reviews/:reviewId
+// @access  Private
+export const deleteReview = async (req, res) => {
+  try {
+    const { productId, reviewId } = req.params;
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    const review = product.reviews.id(reviewId);
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: 'Review not found',
+      });
+    }
+
+    // Check if user owns the review or is admin
+    if (
+      review.user.toString() !== req.user._id.toString() &&
+      req.user.role !== 'admin'
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to delete this review',
+      });
+    }
+
+    // Remove review
+    product.reviews.pull(reviewId);
+
+    // Recalculate rating and numReviews
+    product.numReviews = product.reviews.length;
+    if (product.reviews.length > 0) {
+      product.rating =
+        product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length;
+    } else {
+      product.rating = 0;
+    }
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Review deleted successfully',
+      data: product,
+    });
+  } catch (error) {
+    console.error('Delete review error:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format',
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error deleting review',
+    });
+  }
+};
