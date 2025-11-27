@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
+import productRoutes from './routes/productRoutes.js';
 
 const app = express();
 
@@ -11,12 +12,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'E-Commerce Chat Assistant API - Feature 2 In Progress',
+    message: 'E-Commerce Chat Assistant API - Feature 3 In Progress',
     status: 'Server is running',
   });
 });
