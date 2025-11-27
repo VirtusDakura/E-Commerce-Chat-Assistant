@@ -1,4 +1,0 @@
-// Controllers handle the request/response logic
-// Example: exports.getUsers = async (req, res) => { ... }
-
-// Controllers will be added here as we build features
