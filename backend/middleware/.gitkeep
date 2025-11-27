@@ -1,4 +1,0 @@
-// Middleware functions
-// Example: exports.authMiddleware = (req, res, next) => { ... }
-
-// Middleware will be added here as we build features
