@@ -47,13 +47,11 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Product marketplace is required'],
       enum: ['jumia', 'amazon', 'aliexpress', 'ebay', 'other'],
       lowercase: true,
-      index: true,
     },
     productId: {
       type: String,
       required: [true, 'External product ID is required'],
       trim: true,
-      index: true,
     },
     productUrl: {
       type: String,
@@ -125,9 +123,6 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
-// Compound unique index for marketplace + productId
-productSchema.index({ marketplace: 1, productId: 1 }, { unique: true });
 
 // Compound unique index for marketplace + productId
 productSchema.index({ marketplace: 1, productId: 1 }, { unique: true });
