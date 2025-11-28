@@ -130,7 +130,7 @@ export const removeFromWishlist = async (req, res) => {
 
     // Remove product from wishlist
     wishlist.products = wishlist.products.filter(
-      (id) => id.toString() !== productId
+      (id) => id.toString() !== productId,
     );
     await wishlist.save();
 
