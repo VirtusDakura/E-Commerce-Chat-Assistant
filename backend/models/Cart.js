@@ -13,10 +13,19 @@ const cartItemSchema = new mongoose.Schema(
       min: [1, 'Quantity must be at least 1'],
       default: 1,
     },
+    // Store price for reference only (actual purchase happens on external platform)
     price: {
       type: Number,
       required: true,
       min: [0, 'Price cannot be negative'],
+    },
+    platform: {
+      type: String,
+      required: true,
+    },
+    externalUrl: {
+      type: String,
+      required: true,
     },
   },
   {
@@ -33,20 +42,10 @@ const cartSchema = new mongoose.Schema(
       unique: true,
     },
     items: [cartItemSchema],
-    subtotal: {
-      type: Number,
-      default: 0,
-      min: [0, 'Subtotal cannot be negative'],
-    },
-    tax: {
-      type: Number,
-      default: 0,
-      min: [0, 'Tax cannot be negative'],
-    },
-    total: {
-      type: Number,
-      default: 0,
-      min: [0, 'Total cannot be negative'],
+    // Group items by platform for easier checkout redirection
+    platformGroups: {
+      type: Map,
+      of: [mongoose.Schema.Types.ObjectId],
     },
   },
   {
@@ -54,30 +53,8 @@ const cartSchema = new mongoose.Schema(
   },
 );
 
-// Method to calculate cart totals
-cartSchema.methods.calculateTotals = function () {
-  this.subtotal = this.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
-  
-  // Tax calculation (10% of subtotal)
-  this.tax = this.subtotal * 0.1;
-  
-  // Total = subtotal + tax
-  this.total = this.subtotal + this.tax;
-  
-  // Round to 2 decimal places
-  this.subtotal = Math.round(this.subtotal * 100) / 100;
-  this.tax = Math.round(this.tax * 100) / 100;
-  this.total = Math.round(this.total * 100) / 100;
-};
-
-// Pre-save middleware to calculate totals
-cartSchema.pre('save', function (next) {
-  this.calculateTotals();
-  next();
-});
+// Index for faster queries
+cartSchema.index({ user: 1 });
 
 const Cart = mongoose.model('Cart', cartSchema);
 
