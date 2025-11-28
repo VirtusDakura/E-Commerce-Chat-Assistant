@@ -4,12 +4,17 @@ const messageSchema = new mongoose.Schema(
   {
     role: {
       type: String,
-      enum: ['user', 'assistant'],
+      enum: ['user', 'assistant', 'system'],
       required: true,
     },
     content: {
       type: String,
       required: true,
+      alias: 'text',
+    },
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
     suggestedProducts: [
       {
@@ -29,6 +34,12 @@ const conversationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      alias: 'userId',
+    },
+    sessionId: {
+      type: String,
+      trim: true,
+      index: true,
     },
     title: {
       type: String,
@@ -36,6 +47,11 @@ const conversationSchema = new mongoose.Schema(
       trim: true,
     },
     messages: [messageSchema],
+    intent: {
+      type: String,
+      trim: true,
+      index: true, // e.g., 'shopping', 'browsing', 'comparison'
+    },
     context: {
       // Store conversation context for better responses
       userPreferences: {
@@ -50,6 +66,10 @@ const conversationSchema = new mongoose.Schema(
       lastActivity: {
         type: Date,
         default: Date.now,
+      },
+      marketplace: {
+        type: String,
+        default: 'jumia',
       },
     },
     isActive: {

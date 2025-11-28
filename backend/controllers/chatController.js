@@ -1,163 +1,183 @@
 import Conversation from '../models/Conversation.js';
 import Product from '../models/Product.js';
+import { processMessage } from '../services/aiService.js';
+import { searchJumia } from '../services/jumiaService.js';
 
 /**
- * @desc    Create new conversation or get existing active conversation
- * @route   POST /api/chat/conversations
+ * Main Chat Endpoint - Integrates Gemini AI with Jumia Search
+ * @route   POST /api/chat
  * @access  Private
  */
-export const createOrGetConversation = async (req, res) => {
+export async function chat(req, res, next) {
   try {
-    // Check if user has an active conversation
-    let conversation = await Conversation.findOne({
-      user: req.user.id,
-      isActive: true,
-    }).sort({ 'context.lastActivity': -1 });
+    const { message, sessionId } = req.body;
+    const userId = req.user?.id || req.user?._id;
 
-    if (!conversation) {
-      conversation = await Conversation.create({
-        user: req.user.id,
-        title: 'New Conversation',
-        messages: [],
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: conversation,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error creating conversation',
-      error: error.message,
-    });
-  }
-};
-
-/**
- * @desc    Send message and get AI response with product suggestions
- * @route   POST /api/chat/conversations/:id/messages
- * @access  Private
- */
-export const sendMessage = async (req, res) => {
-  try {
-    const { message } = req.body;
-    const conversationId = req.params.id;
-
-    if (!message) {
+    // Validation
+    if (!message || !message.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Message is required',
       });
     }
 
-    const conversation = await Conversation.findOne({
-      _id: conversationId,
-      user: req.user.id,
-    });
-
-    if (!conversation) {
-      return res.status(404).json({
+    if (!userId) {
+      return res.status(401).json({
         success: false,
-        message: 'Conversation not found',
+        message: 'Authentication required',
       });
     }
 
-    // Add user message
+    // Find or create conversation
+    let conversation = null;
+    if (sessionId) {
+      conversation = await Conversation.findOne({
+        sessionId,
+        user: userId,
+      });
+    }
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        user: userId,
+        sessionId: sessionId || `session-${Date.now()}-${userId}`,
+        messages: [],
+        intent: null,
+        context: {
+          userPreferences: {},
+          searchIntent: '',
+          lastActivity: Date.now(),
+          marketplace: 'jumia',
+        },
+      });
+    }
+
+    // Build conversation history for AI
+    const conversationHistory = conversation.messages.slice(-6).map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
+
+    // Add current user message
     conversation.messages.push({
       role: 'user',
       content: message,
+      metadata: {
+        timestamp: Date.now(),
+      },
     });
 
-    // TODO: Integrate with AI service (OpenAI, etc.) for intelligent responses
-    // For now, we'll use simple keyword matching for product suggestions
+    // Process message with Gemini AI
+    console.log(`[Chat] Processing message for user ${userId}: "${message}"`);
+    const aiResponse = await processMessage(message, conversationHistory);
 
-    const aiResponse = await generateAIResponse(message, conversation);
-    const suggestedProducts = await suggestProductsBasedOnQuery(message);
+    console.log('[Chat] AI Response:', aiResponse);
 
-    // Add AI response
+    let products = [];
+    let productIds = [];
+
+    // If AI wants to search products
+    if (aiResponse.action === 'search_products' && aiResponse.query) {
+      console.log(`[Chat] Searching Jumia for: "${aiResponse.query}"`);
+
+      try {
+        // Search Jumia
+        products = await searchJumia(aiResponse.query, {
+          page: 1,
+          limit: 12,
+        });
+
+        console.log(`[Chat] Found ${products.length} products`);
+
+        // Get product IDs from database (products are cached by jumiaService)
+        const productPromises = products.map(async (p) => {
+          const dbProduct = await Product.findOne({
+            marketplace: p.marketplace,
+            productId: p.productId,
+          });
+          return dbProduct?._id;
+        });
+
+        productIds = (await Promise.all(productPromises)).filter(Boolean);
+      } catch (searchError) {
+        console.error('[Chat] Jumia search error:', searchError.message);
+        aiResponse.reply = `I had trouble searching Jumia right now. ${searchError.message}. Could you try rephrasing your search?`;
+      }
+    }
+
+    // Add assistant message
     conversation.messages.push({
       role: 'assistant',
-      content: aiResponse,
-      suggestedProducts: suggestedProducts.map((p) => p._id),
+      content: aiResponse.reply,
+      metadata: {
+        action: aiResponse.action,
+        query: aiResponse.query,
+        productsCount: products.length,
+      },
+      suggestedProducts: productIds,
     });
 
-    // Update context
+    // Update conversation context
     conversation.context.lastActivity = Date.now();
+    if (aiResponse.action === 'search_products') {
+      conversation.intent = 'shopping';
+      conversation.context.searchIntent = aiResponse.query;
+    }
+
     await conversation.save();
 
-    // Populate suggested products
-    await conversation.populate({
-      path: 'messages.suggestedProducts',
-      select: 'name description price images platform externalUrl rating availability brand',
-    });
-
-    // Add quick actions to suggested products
-    const productsWithActions = suggestedProducts.map((product) => ({
-      ...product.toObject(),
+    // Format response
+    const recommendations = products.map((product) => ({
+      marketplace: product.marketplace,
+      productId: product.productId,
+      title: product.title,
+      price: product.price,
+      currency: product.currency,
+      image: product.image,
+      rating: product.rating,
+      reviewsCount: product.reviewsCount,
+      productUrl: product.productUrl,
       quickActions: {
         addToCart: '/api/cart/add',
-        addToWishlist: '/api/wishlist',
-        viewExternal: product.externalUrl,
-        compare: '/api/products/compare',
+        addToWishlist: '/api/wishlist/add',
+        viewOnJumia: product.productUrl,
       },
     }));
 
     res.status(200).json({
       success: true,
-      data: {
-        conversation,
-        suggestedProducts: productsWithActions,
+      action: aiResponse.action,
+      reply: aiResponse.reply,
+      recommendations,
+      conversationId: conversation._id,
+      sessionId: conversation.sessionId,
+      metadata: {
+        productsCount: recommendations.length,
+        searchQuery: aiResponse.query,
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error sending message',
-      error: error.message,
-    });
+    console.error('[Chat] Error:', error);
+    next(error);
   }
-};
+}
 
 /**
- * @desc    Get all user conversations
- * @route   GET /api/chat/conversations
+ * Get conversation history
+ * @route   GET /api/chat/conversations/:sessionId
  * @access  Private
  */
-export const getUserConversations = async (req, res) => {
+export async function getConversationHistory(req, res, next) {
   try {
-    const conversations = await Conversation.find({ user: req.user.id })
-      .sort({ 'context.lastActivity': -1 })
-      .select('title createdAt context.lastActivity isActive messages');
+    const { sessionId } = req.params;
+    const userId = req.user?.id || req.user?._id;
 
-    res.status(200).json({
-      success: true,
-      count: conversations.length,
-      data: conversations,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching conversations',
-      error: error.message,
-    });
-  }
-};
-
-/**
- * @desc    Get single conversation with full history
- * @route   GET /api/chat/conversations/:id
- * @access  Private
- */
-export const getConversation = async (req, res) => {
-  try {
     const conversation = await Conversation.findOne({
-      _id: req.params.id,
-      user: req.user.id,
+      sessionId,
+      user: userId,
     }).populate({
       path: 'messages.suggestedProducts',
-      select: 'name description price images platform externalUrl rating',
+      select: 'name price currency images marketplace productId productUrl',
     });
 
     if (!conversation) {
@@ -172,24 +192,58 @@ export const getConversation = async (req, res) => {
       data: conversation,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching conversation',
-      error: error.message,
-    });
+    console.error('[Chat] Get conversation error:', error);
+    next(error);
   }
-};
+}
 
 /**
- * @desc    Delete conversation
- * @route   DELETE /api/chat/conversations/:id
+ * Get all user conversations
+ * @route   GET /api/chat/conversations
  * @access  Private
  */
-export const deleteConversation = async (req, res) => {
+export async function getUserConversations(req, res, next) {
   try {
+    const userId = req.user?.id || req.user?._id;
+    const { page = 1, limit = 10 } = req.query;
+
+    const conversations = await Conversation.find({ user: userId })
+      .sort({ 'context.lastActivity': -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit))
+      .select('sessionId intent context.lastActivity messages');
+
+    const total = await Conversation.countDocuments({ user: userId });
+
+    res.status(200).json({
+      success: true,
+      data: conversations,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit)),
+      },
+    });
+  } catch (error) {
+    console.error('[Chat] Get conversations error:', error);
+    next(error);
+  }
+}
+
+/**
+ * Delete conversation
+ * @route   DELETE /api/chat/conversations/:sessionId
+ * @access  Private
+ */
+export async function deleteConversation(req, res, next) {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
     const conversation = await Conversation.findOneAndDelete({
-      _id: req.params.id,
-      user: req.user.id,
+      sessionId,
+      user: userId,
     });
 
     if (!conversation) {
@@ -204,74 +258,14 @@ export const deleteConversation = async (req, res) => {
       message: 'Conversation deleted successfully',
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error deleting conversation',
-      error: error.message,
-    });
+    console.error('[Chat] Delete conversation error:', error);
+    next(error);
   }
+}
+
+export default {
+  chat,
+  getConversationHistory,
+  getUserConversations,
+  deleteConversation,
 };
-
-// Helper function to generate AI response (placeholder)
-async function generateAIResponse(userMessage, _conversation) {
-  const lowerMessage = userMessage.toLowerCase();
-
-  // Simple keyword-based responses (replace with actual AI integration)
-  if (
-    lowerMessage.includes('laptop') ||
-    lowerMessage.includes('computer')
-  ) {
-    return 'I\'d be happy to help you find a laptop! To give you the best recommendations, could you tell me:\n1. What\'s your budget range?\n2. What will you primarily use it for? (coding, gaming, general use, etc.)\n3. Do you have any brand preferences?\n\nI\'ve found some laptops that might interest you below.';
-  }
-
-  if (lowerMessage.includes('phone') || lowerMessage.includes('smartphone')) {
-    return 'Looking for a new phone! Let me help you find the perfect one. Could you share:\n1. Your budget?\n2. Preferred brand (Apple, Samsung, etc.)?\n3. Key features you need (camera quality, battery life, etc.)?\n\nHere are some popular options I found:';
-  }
-
-  if (lowerMessage.includes('headphone') || lowerMessage.includes('earbuds')) {
-    return 'Great! I can help you find the right headphones. Tell me:\n1. Your price range?\n2. Type (over-ear, in-ear, wireless)?\n3. Main use (music, gaming, calls)?\n\nCheck out these options:';
-  }
-
-  // Default response
-  return 'I\'m here to help you find products from top e-commerce platforms like Jumia, Amazon, and more! What are you looking for today? You can ask about laptops, phones, electronics, clothing, and much more.';
-}
-
-// Helper function to suggest products based on query
-async function suggestProductsBasedOnQuery(query) {
-  try {
-    const lowerQuery = query.toLowerCase();
-    const keywords = [];
-
-    // Extract keywords
-    if (lowerQuery.includes('laptop')) {
-      keywords.push('laptop', 'computer', 'notebook');
-    }
-    if (lowerQuery.includes('gaming')) {
-      keywords.push('gaming');
-    }
-    if (lowerQuery.includes('phone')) {
-      keywords.push('phone', 'smartphone');
-    }
-    if (lowerQuery.includes('headphone') || lowerQuery.includes('earbuds')) {
-      keywords.push('headphone', 'earbuds', 'audio');
-    }
-
-    if (keywords.length === 0) {
-      // Return some featured products
-      return await Product.find({ featured: true }).limit(5);
-    }
-
-    // Search for products matching keywords
-    const searchRegex = new RegExp(keywords.join('|'), 'i');
-    const products = await Product.find({
-      $or: [{ name: searchRegex }, { description: searchRegex }],
-    })
-      .limit(5)
-      .sort({ rating: -1 });
-
-    return products;
-  } catch (error) {
-    console.error('Error suggesting products:', error);
-    return [];
-  }
-}
