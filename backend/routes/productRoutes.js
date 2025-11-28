@@ -4,6 +4,7 @@ import {
   getProductById,
   getFeaturedProducts,
   searchProducts,
+  compareProducts,
 } from '../controllers/productController.js';
 
 const router = express.Router();
@@ -12,6 +13,7 @@ const router = express.Router();
 router.get('/', getAllProducts);
 router.get('/search', searchProducts);
 router.get('/featured', getFeaturedProducts);
+router.post('/compare', compareProducts);
 router.get('/:id', getProductById);
 
 export default router;

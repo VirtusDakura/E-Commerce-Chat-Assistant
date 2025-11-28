@@ -90,14 +90,25 @@ export const sendMessage = async (req, res) => {
     // Populate suggested products
     await conversation.populate({
       path: 'messages.suggestedProducts',
-      select: 'name description price images platform externalUrl rating',
+      select: 'name description price images platform externalUrl rating availability brand',
     });
+
+    // Add quick actions to suggested products
+    const productsWithActions = suggestedProducts.map((product) => ({
+      ...product.toObject(),
+      quickActions: {
+        addToCart: '/api/cart/add',
+        addToWishlist: '/api/wishlist',
+        viewExternal: product.externalUrl,
+        compare: '/api/products/compare',
+      },
+    }));
 
     res.status(200).json({
       success: true,
       data: {
         conversation,
-        suggestedProducts,
+        suggestedProducts: productsWithActions,
       },
     });
   } catch (error) {

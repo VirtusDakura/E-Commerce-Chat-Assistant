@@ -8,7 +8,7 @@ export const getCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({ user: req.user._id }).populate(
       'items.product',
-      'name price images stock',
+      'name price images platform externalUrl availability rating numReviews brand',
     );
 
     if (!cart) {
@@ -16,9 +16,37 @@ export const getCart = async (req, res) => {
       cart = await Cart.create({ user: req.user._id, items: [] });
     }
 
+    // Group items by platform for easier checkout
+    const platformGroups = {};
+    let totalEstimate = 0;
+
+    cart.items.forEach((item) => {
+      const platform = item.platform;
+      if (!platformGroups[platform]) {
+        platformGroups[platform] = {
+          platform,
+          items: [],
+          subtotal: 0,
+          itemCount: 0,
+        };
+      }
+
+      const itemTotal = item.price * item.quantity;
+      platformGroups[platform].items.push(item);
+      platformGroups[platform].subtotal += itemTotal;
+      platformGroups[platform].itemCount += item.quantity;
+      totalEstimate += itemTotal;
+    });
+
     res.status(200).json({
       success: true,
-      data: cart,
+      data: {
+        cart,
+        platformGroups: Object.values(platformGroups),
+        totalEstimate,
+        itemCount: cart.items.length,
+        note: 'Checkout happens on external platforms. Click platform links to purchase.',
+      },
     });
   } catch (error) {
     console.error('Get cart error:', error);
