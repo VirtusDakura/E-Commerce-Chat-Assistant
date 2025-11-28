@@ -296,3 +296,139 @@ export const compareProducts = async (req, res) => {
     });
   }
 };
+
+// @desc    Search Jumia products
+// @route   GET /api/products/jumia/search
+// @access  Public
+export const searchJumiaProducts = async (req, res) => {
+  try {
+    const { q: query, page, limit } = req.query;
+
+    if (!query) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query (q) is required',
+      });
+    }
+
+    const { searchJumia } = await import('../services/jumiaService.js');
+
+    const products = await searchJumia(query, {
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 24,
+    });
+
+    const total = products.length;
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      total,
+      page: parseInt(page) || 1,
+      marketplace: 'jumia',
+    });
+  } catch (error) {
+    console.error('Jumia search error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error searching Jumia products',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    });
+  }
+};
+
+// @desc    Get product by marketplace and productId
+// @route   GET /api/products/:marketplace/:productId
+// @access  Public
+export const getProductByMarketplaceId = async (req, res) => {
+  try {
+    const { marketplace, productId } = req.params;
+
+    const product = await Product.findOne({
+      marketplace: marketplace.toLowerCase(),
+      productId,
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: `Product not found: ${marketplace}/${productId}`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    console.error('Get product by marketplace ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error fetching product',
+    });
+  }
+};
+
+// @desc    Refresh product data from external source
+// @route   POST /api/products/refresh/:marketplace/:productId
+// @access  Private/Admin
+export const refreshProductData = async (req, res) => {
+  try {
+    const { marketplace, productId } = req.params;
+
+    if (marketplace.toLowerCase() !== 'jumia') {
+      return res.status(400).json({
+        success: false,
+        message: `Marketplace ${marketplace} refresh not supported yet`,
+      });
+    }
+
+    const { refreshProduct } = await import('../services/jumiaService.js');
+    const product = await refreshProduct(marketplace.toLowerCase(), productId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Product data refreshed successfully',
+      data: product,
+    });
+  } catch (error) {
+    console.error('Refresh product error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error refreshing product',
+    });
+  }
+};
+
+// @desc    Redirect to external product URL and track click
+// @route   GET /api/products/redirect/:marketplace/:productId
+// @access  Public
+export const redirectToProduct = async (req, res) => {
+  try {
+    const { marketplace, productId } = req.params;
+
+    const product = await Product.findOne({
+      marketplace: marketplace.toLowerCase(),
+      productId,
+    });
+
+    if (!product || !product.productUrl) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product URL not found',
+      });
+    }
+
+    // TODO: Log click event for analytics
+    console.log(`[Analytics] Product click: ${marketplace}/${productId} by user ${req.user?.id || 'anonymous'}`);
+
+    // Redirect to external marketplace
+    res.redirect(302, product.productUrl);
+  } catch (error) {
+    console.error('Redirect error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error redirecting to product',
+    });
+  }
+};

@@ -1,20 +1,24 @@
 import express from 'express';
 import {
-  createOrGetConversation,
-  sendMessage,
+  chat,
+  getConversationHistory,
   getUserConversations,
-  getConversation,
   deleteConversation,
 } from '../controllers/chatController.js';
 import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// All routes are protected
-router.post('/conversations', protect, createOrGetConversation);
+// Main chat endpoint with Gemini AI and Jumia scraping
+router.post('/', protect, chat);
+
+// Get conversation history by sessionId
+router.get('/conversations/:sessionId', protect, getConversationHistory);
+
+// Get all user conversations (paginated)
 router.get('/conversations', protect, getUserConversations);
-router.get('/conversations/:id', protect, getConversation);
-router.post('/conversations/:id/messages', protect, sendMessage);
-router.delete('/conversations/:id', protect, deleteConversation);
+
+// Delete conversation by sessionId
+router.delete('/conversations/:sessionId', protect, deleteConversation);
 
 export default router;
