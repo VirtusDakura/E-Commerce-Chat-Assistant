@@ -40,6 +40,7 @@ const cartSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
       unique: true,
+      index: true,
     },
     items: [cartItemSchema],
     // Group items by platform for easier checkout redirection
@@ -52,9 +53,6 @@ const cartSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
-// Index for faster queries
-cartSchema.index({ user: 1 });
 
 const Cart = mongoose.model('Cart', cartSchema);
 

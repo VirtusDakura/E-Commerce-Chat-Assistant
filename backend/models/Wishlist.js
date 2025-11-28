@@ -55,6 +55,7 @@ const wishlistSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
       unique: true,
+      index: true,
     },
     items: [wishlistItemSchema],
     // Collections/folders for organization
@@ -69,7 +70,6 @@ const wishlistSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
-wishlistSchema.index({ user: 1 });
 wishlistSchema.index({ 'items.product': 1 });
 
 const Wishlist = mongoose.model('Wishlist', wishlistSchema);
