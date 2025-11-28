@@ -1,4 +1,0 @@
-// Services contain business logic
-// Example: exports.createUser = async (userData) => { ... }
-
-// Services will be added here as we build features
