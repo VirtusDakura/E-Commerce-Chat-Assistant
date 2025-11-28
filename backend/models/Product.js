@@ -60,11 +60,30 @@ const productSchema = new mongoose.Schema(
         'Other',
       ],
     },
-    stock: {
-      type: Number,
-      required: [true, 'Product stock is required'],
-      min: [0, 'Stock cannot be negative'],
-      default: 0,
+    // External product information
+    platform: {
+      type: String,
+      required: [true, 'Product platform is required'],
+      enum: ['Jumia', 'Amazon', 'AliExpress', 'eBay', 'Other'],
+    },
+    externalUrl: {
+      type: String,
+      required: [true, 'External product URL is required'],
+      trim: true,
+    },
+    externalProductId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    affiliateLink: {
+      type: String,
+      trim: true,
+    },
+    availability: {
+      type: String,
+      enum: ['In Stock', 'Out of Stock', 'Pre-Order', 'Unknown'],
+      default: 'Unknown',
     },
     images: [
       {
@@ -92,10 +111,20 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
+    // Metadata for chat assistant
+    tags: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    specifications: {
+      type: Map,
+      of: String,
+    },
+    lastSyncedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {

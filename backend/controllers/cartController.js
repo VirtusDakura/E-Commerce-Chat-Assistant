@@ -52,19 +52,12 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // Check if product exists and has sufficient stock
+    // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
         success: false,
         message: 'Product not found',
-      });
-    }
-
-    if (product.stock < quantityToAdd) {
-      return res.status(400).json({
-        success: false,
-        message: `Only ${product.stock} items available in stock`,
       });
     }
 
@@ -82,22 +75,17 @@ export const addToCart = async (req, res) => {
     if (existingItemIndex > -1) {
       // Update quantity if item exists
       const newQuantity = cart.items[existingItemIndex].quantity + quantityToAdd;
-      
-      if (product.stock < newQuantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Only ${product.stock} items available in stock`,
-        });
-      }
 
       cart.items[existingItemIndex].quantity = newQuantity;
       cart.items[existingItemIndex].price = product.price;
     } else {
-      // Add new item to cart
+      // Add new item to cart with external link info
       cart.items.push({
         product: productId,
         quantity: quantityToAdd,
         price: product.price,
+        platform: product.platform,
+        externalUrl: product.externalUrl,
       });
     }
 
@@ -106,7 +94,7 @@ export const addToCart = async (req, res) => {
     // Populate product details before sending response
     cart = await Cart.findById(cart._id).populate(
       'items.product',
-      'name price images stock',
+      'name price images platform externalUrl availability rating',
     );
 
     res.status(200).json({
