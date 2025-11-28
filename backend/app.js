@@ -5,7 +5,6 @@ import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import wishlistRoutes from './routes/wishlistRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 
 const app = express();
@@ -22,14 +21,14 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/wishlist', wishlistRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'E-Commerce Chat Assistant API - Feature 5 In Progress',
+    message: 'E-Commerce Chat Assistant API - AI-Powered Product Discovery',
     status: 'Server is running',
+    description: 'Chat with AI to discover products from multiple platforms (Jumia, Amazon, etc.)',
   });
 });
 
