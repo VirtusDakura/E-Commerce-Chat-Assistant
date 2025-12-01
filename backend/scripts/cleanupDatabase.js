@@ -11,7 +11,7 @@ const cleanupDatabase = async () => {
     console.log('✅ Connected to MongoDB');
 
     const db = mongoose.connection.db;
-    
+
     // Get all collections
     const collections = await db.listCollections().toArray();
     console.log('\n📊 Current collections:');
@@ -43,12 +43,12 @@ const cleanupDatabase = async () => {
       });
 
       console.log('\n🗑️  Removing unused collections...');
-      
+
       for (const collectionName of collectionsToRemove) {
         await db.dropCollection(collectionName);
         console.log(`  ✅ Dropped: ${collectionName}`);
       }
-      
+
       console.log('\n✅ Database cleanup complete!');
     }
 
