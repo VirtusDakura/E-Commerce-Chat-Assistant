@@ -1,5 +1,7 @@
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import TokenBlacklist from '../models/TokenBlacklist.js';
 import { generateToken } from '../utils/jwt.js';
 import { sendEmail } from '../utils/sendEmail.js';
 
@@ -227,6 +229,59 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Error resetting password',
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    // Get token from header
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided',
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    // Decode token to get expiry time
+    const decoded = jwt.decode(token);
+    
+    if (!decoded || !decoded.exp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid token',
+      });
+    }
+
+    // Add token to blacklist with expiry time
+    await TokenBlacklist.create({
+      token,
+      userId: req.user._id,
+      expiresAt: new Date(decoded.exp * 1000), // Convert from Unix timestamp
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Logged out successfully',
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    
+    // Handle duplicate token error (already logged out)
+    if (error.code === 11000) {
+      return res.status(200).json({
+        success: true,
+        message: 'Already logged out',
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error logging out',
     });
   }
 };

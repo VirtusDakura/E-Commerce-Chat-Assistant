@@ -4,7 +4,14 @@
 
 ### ✅ Expected Collections
 
-Your project should have exactly **5 collections**:
+Your project should have exactly **6 collections**:
+
+1. **users** - User accounts and authentication
+2. **tokenblacklists** - Invalidated JWT tokens (for logout)
+3. **products** - Cached products from marketplaces
+4. **conversations** - Chat history with Gemini AI
+5. **carts** - User shopping carts
+6. **wishlists** - User wishlists
 
 ---
 
@@ -44,7 +51,47 @@ Your project should have exactly **5 collections**:
 
 ---
 
-## 2. **products** Collection
+## 2. **tokenblacklists** Collection
+**Purpose**: Store invalidated JWT tokens when users logout
+
+**Schema**: `models/TokenBlacklist.js`
+
+**Fields**:
+```javascript
+{
+  _id: ObjectId,
+  token: String (unique, indexed),
+  userId: ObjectId (ref: 'User', indexed),
+  expiresAt: Date (TTL index),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+**Indexes**:
+- `token`: unique index for fast lookup
+- `userId`: index for user-based queries
+- `expiresAt`: TTL index (automatically deletes expired tokens after 24 hours)
+
+**Sample Document**:
+```json
+{
+  "_id": "675...",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "userId": "674...",
+  "expiresAt": "2025-12-02T12:00:00.000Z",
+  "createdAt": "2025-12-01T12:00:00.000Z",
+  "updatedAt": "2025-12-01T12:00:00.000Z"
+}
+```
+
+**Notes**:
+- Tokens are automatically deleted 24 hours after expiry (MongoDB TTL index)
+- Used to prevent logged-out users from accessing protected routes
+
+---
+
+## 3. **products** Collection
 **Purpose**: Cache products scraped from external marketplaces (Jumia, Amazon, etc.)
 
 **Schema**: `models/Product.js`

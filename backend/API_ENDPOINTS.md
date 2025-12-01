@@ -14,6 +14,7 @@ http://localhost:5000
 |--------|----------|---------------|-------------|
 | POST | `/api/auth/register` | ❌ No | Register new user |
 | POST | `/api/auth/login` | ❌ No | Login user |
+| POST | `/api/auth/logout` | ✅ Yes | Logout user (invalidate token) |
 | POST | `/api/auth/forgot-password` | ❌ No | Request password reset |
 | PUT | `/api/auth/reset-password/:token` | ❌ No | Reset password with token |
 
