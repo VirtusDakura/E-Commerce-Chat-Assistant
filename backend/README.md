@@ -81,10 +81,11 @@ Create a `.env` file in the backend directory:
 PORT=5000
 NODE_ENV=development
 
-# Database
+# Database (Local MongoDB)
 MONGO_URI=mongodb://localhost:27017/ecommerce-chat-assistant
-# Or use MongoDB Atlas:
-# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
+
+# Database (MongoDB Atlas - recommended for production)
+# MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database-name>
 
 # JWT Authentication
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
