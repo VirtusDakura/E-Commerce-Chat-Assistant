@@ -74,7 +74,7 @@ export async function processMessage(message, conversationHistory = []) {
 
     // Initialize model with system instruction
     const model = genAI.getGenerativeModel({
-      model: 'gemini-pro',
+      model: 'gemini-2.0-flash',
       systemInstruction: SYSTEM_INSTRUCTION,
       generationConfig: {
         temperature: 0.7,
