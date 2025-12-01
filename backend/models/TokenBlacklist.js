@@ -6,11 +6,13 @@ const tokenBlacklistSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      index: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      index: true,
     },
     expiresAt: {
       type: Date,
@@ -21,10 +23,6 @@ const tokenBlacklistSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
-// Index for efficient lookups
-tokenBlacklistSchema.index({ token: 1 });
-tokenBlacklistSchema.index({ userId: 1 });
 
 // TTL index to automatically delete expired tokens after 24 hours of expiry
 tokenBlacklistSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 86400 });
