@@ -237,7 +237,7 @@ export const logout = async (req, res) => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
@@ -249,7 +249,7 @@ export const logout = async (req, res) => {
 
     // Decode token to get expiry time
     const decoded = jwt.decode(token);
-    
+
     if (!decoded || !decoded.exp) {
       return res.status(400).json({
         success: false,
@@ -270,7 +270,7 @@ export const logout = async (req, res) => {
     });
   } catch (error) {
     console.error('Logout error:', error);
-    
+
     // Handle duplicate token error (already logged out)
     if (error.code === 11000) {
       return res.status(200).json({
