@@ -1,5 +1,6 @@
 import { verifyToken } from '../utils/jwt.js';
 import User from '../models/User.js';
+import TokenBlacklist from '../models/TokenBlacklist.js';
 
 export const protect = async (req, res, next) => {
   try {
@@ -13,6 +14,15 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: 'Not authorized to access this route',
+      });
+    }
+
+    // Check if token is blacklisted (user has logged out)
+    const blacklistedToken = await TokenBlacklist.findOne({ token });
+    if (blacklistedToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token has been invalidated. Please login again.',
       });
     }
 

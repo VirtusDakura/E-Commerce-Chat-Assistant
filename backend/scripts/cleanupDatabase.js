@@ -24,6 +24,7 @@ const cleanupDatabase = async () => {
       'carts',
       'conversations',
       'products',
+      'tokenblacklists',
       'users',
       'wishlists',
     ];
