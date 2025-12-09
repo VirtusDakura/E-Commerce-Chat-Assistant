@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   FiShoppingCart,
   FiHeart,
-  FiSearch,
   FiMenu,
   FiX,
   FiUser,
@@ -16,7 +15,6 @@ import {
 import { cn } from '../../lib/utils';
 import { useCartStore, useWishlistStore, useAuthStore } from '../../store';
 import Button from '../ui/Button';
-import Input from '../ui/Input';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -27,7 +25,6 @@ const navLinks = [
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
 
   const { isAuthenticated, user, logout } = useAuthStore();
@@ -45,14 +42,6 @@ const Navbar = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // Navigate to search results
-      console.log('Searching for:', searchQuery);
-    }
-  };
 
   const handleLogout = () => {
     logout();
@@ -108,18 +97,6 @@ const Navbar = () => {
               </NavLink>
             ))}
           </div>
-
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="hidden md:block flex-1 max-w-md mx-8">
-            <Input
-              type="search"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              leftIcon={<FiSearch className="w-5 h-5" />}
-              inputClassName="bg-gray-50 border-gray-200 focus:bg-white"
-            />
-          </form>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 lg:gap-4">
@@ -202,20 +179,6 @@ const Navbar = () => {
               )}
             </button>
           </div>
-        </div>
-
-        {/* Mobile Search */}
-        <div className="md:hidden pb-3">
-          <form onSubmit={handleSearch}>
-            <Input
-              type="search"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              leftIcon={<FiSearch className="w-5 h-5" />}
-              inputClassName="bg-gray-50 border-gray-200"
-            />
-          </form>
         </div>
       </nav>
 
