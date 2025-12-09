@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiArrowLeft, FiExternalLink, FiMessageCircle } from 'react-icons/fi';
+import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiExternalLink, FiMessageCircle } from 'react-icons/fi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { useCartStore } from '../store';
+import Spinner from '../components/ui/Spinner';
+import { useCartStore, useAuthStore } from '../store';
 
 // Format price with currency (GHS for Jumia Ghana)
 const formatPrice = (price, currency = 'GHS') => {
@@ -16,6 +18,7 @@ const formatPrice = (price, currency = 'GHS') => {
 const CartPage = () => {
   const {
     items,
+    isLoading,
     removeItem,
     incrementQuantity,
     decrementQuantity,
@@ -23,7 +26,17 @@ const CartPage = () => {
     getSubtotal,
     getItemCount,
     getItemsByPlatform,
+    fetchCart,
   } = useCartStore();
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Fetch cart from backend when user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCart();
+    }
+  }, [isAuthenticated, fetchCart]);
 
   const subtotal = getSubtotal();
   const itemsByPlatform = getItemsByPlatform();
@@ -33,6 +46,14 @@ const CartPage = () => {
       window.open(productUrl, '_blank', 'noopener,noreferrer');
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

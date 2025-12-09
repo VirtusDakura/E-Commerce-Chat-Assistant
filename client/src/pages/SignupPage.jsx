@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Alert from '../components/ui/Alert';
 import { useAuthStore } from '../store';
+import { authService } from '../services/authService';
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,21 +31,20 @@ const SignupPage = () => {
     setError('');
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock successful registration
-      const mockUser = {
-        id: '1',
+      // Call real backend API
+      const response = await authService.register({
         name: data.name,
         email: data.email,
-      };
-      const mockToken = 'mock-jwt-token-' + Date.now();
+        password: data.password,
+      });
 
-      await login(mockUser, mockToken);
+      // Handle successful registration
+      const { user, token } = response.data;
+      await login(user, token);
       navigate('/');
-    } catch {
-      setError('Registration failed. Please try again.');
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

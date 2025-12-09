@@ -1,10 +1,12 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiHeart, FiShoppingCart, FiTrash2, FiExternalLink, FiMessageCircle } from 'react-icons/fi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Rating from '../components/ui/Rating';
-import { useWishlistStore, useCartStore } from '../store';
+import Spinner from '../components/ui/Spinner';
+import { useWishlistStore, useCartStore, useAuthStore } from '../store';
 import { toast } from '../components/ui/Toast';
 
 // Format price with currency (GHS for Jumia Ghana)
@@ -16,8 +18,16 @@ const formatPrice = (price, currency = 'GHS') => {
 };
 
 const WishlistPage = () => {
-  const { items, removeItem, clearWishlist } = useWishlistStore();
+  const { items, isLoading, removeItem, clearWishlist, fetchWishlist } = useWishlistStore();
   const addToCart = useCartStore((state) => state.addItem);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Fetch wishlist from backend when user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchWishlist();
+    }
+  }, [isAuthenticated, fetchWishlist]);
 
   const handleMoveToCart = (item) => {
     addToCart(item);
@@ -30,6 +40,14 @@ const WishlistPage = () => {
       window.open(productUrl, '_blank', 'noopener,noreferrer');
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

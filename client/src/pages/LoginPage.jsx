@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Alert from '../components/ui/Alert';
 import { useAuthStore } from '../store';
+import { authService } from '../services/authService';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,21 +27,19 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock successful login
-      const mockUser = {
-        id: '1',
-        name: 'John Doe',
+      // Call real backend API
+      const response = await authService.login({
         email: data.email,
-      };
-      const mockToken = 'mock-jwt-token-' + Date.now();
+        password: data.password,
+      });
 
-      await login(mockUser, mockToken);
+      // Handle successful login
+      const { user, token } = response.data;
+      await login(user, token);
       navigate('/');
-    } catch {
-      setError('Invalid email or password. Please try again.');
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Invalid email or password. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

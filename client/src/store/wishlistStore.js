@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { wishlistService } from '../services/wishlistService';
 
 const useWishlistStore = create(
   persist(
@@ -11,6 +12,34 @@ const useWishlistStore = create(
 
       // Helper to get product ID (handles different ID field names from backend)
       getProductId: (product) => product.id || product._id || product.productId,
+
+      // Fetch wishlist from backend (for authenticated users)
+      fetchWishlist: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await wishlistService.getWishlist();
+          // Backend returns { items: [...] } with populated product info
+          const backendItems = response.data.items.map((item) => ({
+            id: item._id,
+            _id: item._id,
+            productId: item.product?.productId || item.product?._id,
+            name: item.product?.name,
+            price: item.currentPrice || item.product?.price,
+            savedPrice: item.savedPrice,
+            currency: 'GHS',
+            image: item.product?.images?.[0],
+            productUrl: item.product?.externalUrl,
+            marketplace: item.product?.platform || 'jumia',
+            addedAt: item.addedAt,
+            priceChanged: item.priceChanged,
+            priceDropped: item.priceDropped,
+          }));
+          set({ items: backendItems, isLoading: false });
+        } catch (error) {
+          console.error('Failed to fetch wishlist:', error);
+          set({ isLoading: false, error: error.message });
+        }
+      },
 
       // Actions
       addItem: (product) => {
