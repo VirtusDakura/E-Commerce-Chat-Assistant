@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { cartService } from '../services/cartService';
 
 const useCartStore = create(
   persist(
@@ -11,6 +12,31 @@ const useCartStore = create(
 
       // Helper to get product ID (handles different ID field names from backend)
       getProductId: (product) => product.id || product._id || product.productId,
+
+      // Fetch cart from backend (for authenticated users)
+      fetchCart: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await cartService.getCart();
+          // Backend returns { cart: { items: [...] }, platformGroups, totalEstimate }
+          const backendItems = response.data.cart.items.map((item) => ({
+            id: item._id,
+            _id: item._id,
+            productId: item.product?.productId || item.product?._id,
+            name: item.product?.name || item.productName,
+            price: item.price,
+            currency: 'GHS',
+            image: item.product?.images?.[0] || item.productImage,
+            productUrl: item.product?.externalUrl || item.externalUrl,
+            marketplace: item.platform || 'jumia',
+            quantity: item.quantity,
+          }));
+          set({ items: backendItems, isLoading: false });
+        } catch (error) {
+          console.error('Failed to fetch cart:', error);
+          set({ isLoading: false, error: error.message });
+        }
+      },
 
       // Actions
       addItem: (product, quantity = 1) => {

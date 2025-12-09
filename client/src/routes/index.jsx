@@ -76,7 +76,11 @@ const router = createBrowserRouter([
         element: <ChatPage />,
       },
       {
-        path: 'product/:id',
+        path: 'product/:marketplace/:productId',
+        element: <ProductDetailPage />,
+      },
+      {
+        path: 'product/:productId',
         element: <ProductDetailPage />,
       },
       {
