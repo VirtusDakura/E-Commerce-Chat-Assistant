@@ -1,10 +1,7 @@
-import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiCheckCircle, FiAlertCircle, FiInfo, FiAlertTriangle } from 'react-icons/fi';
 import { cn } from '../../lib/utils';
-
-// Create context for toast
-const ToastContext = createContext(null);
 
 const toastVariants = {
   info: {

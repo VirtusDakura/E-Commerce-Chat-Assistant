@@ -24,7 +24,7 @@ const ChatBubble = ({ message, isUser = false }) => {
           <Avatar
             name="AI"
             size="sm"
-            className="bg-gradient-to-br from-blue-500 to-blue-700 text-white"
+            className="bg-linear-to-br from-blue-500 to-blue-700 text-white"
           />
         )}
       </div>

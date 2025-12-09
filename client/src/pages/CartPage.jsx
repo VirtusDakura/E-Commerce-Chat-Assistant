@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiArrowLeft, FiTag } from 'react-icons/fi';
+import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiArrowLeft, FiExternalLink, FiMessageCircle } from 'react-icons/fi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { useCartStore } from '../store';
-import { formatPrice } from '../lib/utils';
+
+// Format price with currency (GHS for Jumia Ghana)
+const formatPrice = (price, currency = 'GHS') => {
+  return new Intl.NumberFormat('en-GH', {
+    style: 'currency',
+    currency: currency,
+  }).format(price);
+};
 
 const CartPage = () => {
   const {
@@ -15,12 +22,17 @@ const CartPage = () => {
     clearCart,
     getSubtotal,
     getItemCount,
+    getItemsByPlatform,
   } = useCartStore();
 
   const subtotal = getSubtotal();
-  const shipping = subtotal > 50 ? 0 : 9.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const itemsByPlatform = getItemsByPlatform();
+
+  const handleBuyOnPlatform = (productUrl) => {
+    if (productUrl) {
+      window.open(productUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -36,12 +48,11 @@ const CartPage = () => {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h1>
             <p className="text-gray-600 mb-8">
-              Looks like you haven't added any items to your cart yet. 
-              Start shopping to fill it up!
+              Chat with our AI assistant to find products and add them to your cart!
             </p>
-            <Link to="/">
-              <Button size="lg" leftIcon={<FiArrowLeft className="w-5 h-5" />}>
-                Continue Shopping
+            <Link to="/chat">
+              <Button size="lg" leftIcon={<FiMessageCircle className="w-5 h-5" />}>
+                Start Shopping with AI
               </Button>
             </Link>
           </motion.div>
@@ -60,81 +71,105 @@ const CartPage = () => {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
-          <p className="text-gray-600">{getItemCount()} items in your cart</p>
+          <p className="text-gray-600">{getItemCount()} items from external marketplaces</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            {items.map((item, index) => (
+          {/* Cart Items Grouped by Platform */}
+          <div className="lg:col-span-2 space-y-6">
+            {Object.entries(itemsByPlatform).map(([platform, platformItems]) => (
               <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
+                key={platform}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
               >
-                <Card variant="elevated" className="p-4">
-                  <div className="flex gap-4">
-                    {/* Product Image */}
-                    <Link to={`/product/${item.id}`}>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-24 h-24 object-cover rounded-lg"
-                      />
-                    </Link>
+                <Card variant="elevated" className="overflow-hidden">
+                  {/* Platform Header */}
+                  <div className="bg-orange-500 px-4 py-3 flex items-center justify-between">
+                    <h3 className="text-white font-semibold capitalize flex items-center gap-2">
+                      <FiExternalLink className="w-4 h-4" />
+                      {platform} Ghana
+                    </h3>
+                    <span className="text-white/80 text-sm">
+                      {platformItems.length} item{platformItems.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
 
-                    {/* Product Details */}
-                    <div className="flex-1 min-w-0">
-                      <Link to={`/product/${item.id}`}>
-                        <h3 className="font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-2">
-                          {item.name}
-                        </h3>
-                      </Link>
-                      {item.category && (
-                        <p className="text-sm text-gray-500 mt-1">{item.category}</p>
-                      )}
-                      <p className="text-lg font-bold text-blue-600 mt-2">
-                        {formatPrice(item.price)}
-                      </p>
-                    </div>
+                  {/* Platform Items */}
+                  <div className="divide-y divide-gray-100">
+                    {platformItems.map((item) => (
+                      <div key={item.id} className="p-4 flex gap-4">
+                        {/* Product Image */}
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
 
-                    {/* Quantity Controls */}
-                    <div className="flex flex-col items-end gap-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => decrementQuantity(item.id)}
-                          className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-                        >
-                          <FiMinus className="w-4 h-4" />
-                        </button>
-                        <span className="w-10 text-center font-medium">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => incrementQuantity(item.id)}
-                          className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-                        >
-                          <FiPlus className="w-4 h-4" />
-                        </button>
+                        {/* Product Details */}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-gray-900 line-clamp-2">
+                            {item.name}
+                          </h4>
+                          <p className="text-lg font-bold text-blue-600 mt-1">
+                            {formatPrice(item.price, item.currency)}
+                          </p>
+                          
+                          {/* Quantity Controls */}
+                          <div className="flex items-center gap-2 mt-2">
+                            <button
+                              onClick={() => decrementQuantity(item.id)}
+                              className="p-1 rounded border border-gray-200 hover:bg-gray-100"
+                            >
+                              <FiMinus className="w-3 h-3" />
+                            </button>
+                            <span className="w-8 text-center text-sm font-medium">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => incrementQuantity(item.id)}
+                              className="p-1 rounded border border-gray-200 hover:bg-gray-100"
+                            >
+                              <FiPlus className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-col items-end gap-2">
+                          <p className="font-bold text-gray-900">
+                            {formatPrice(item.price * item.quantity, item.currency)}
+                          </p>
+                          {item.productUrl && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleBuyOnPlatform(item.productUrl)}
+                              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                              leftIcon={<FiExternalLink className="w-3 h-3" />}
+                            >
+                              Buy
+                            </Button>
+                          )}
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1"
+                          >
+                            <FiTrash2 className="w-3 h-3" />
+                            Remove
+                          </button>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="flex items-center gap-1 text-sm text-red-500 hover:text-red-600 transition-colors"
-                      >
-                        <FiTrash2 className="w-4 h-4" />
-                        Remove
-                      </button>
-                    </div>
+                    ))}
                   </div>
                 </Card>
               </motion.div>
             ))}
 
-            {/* Clear Cart */}
+            {/* Actions */}
             <div className="flex justify-between items-center pt-4">
-              <Link to="/">
-                <Button variant="ghost" leftIcon={<FiArrowLeft className="w-4 h-4" />}>
+              <Link to="/chat">
+                <Button variant="ghost" leftIcon={<FiMessageCircle className="w-4 h-4" />}>
                   Continue Shopping
                 </Button>
               </Link>
@@ -155,72 +190,60 @@ const CartPage = () => {
               animate={{ opacity: 1, x: 0 }}
             >
               <Card variant="elevated" className="p-6 sticky top-24">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Cart Summary</h2>
 
-                {/* Coupon Code */}
-                <div className="mb-6">
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <FiTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                      <input
-                        type="text"
-                        placeholder="Coupon code"
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <Button variant="outline">Apply</Button>
-                  </div>
+                {/* Info Notice */}
+                <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="text-sm text-blue-700">
+                    <strong>Note:</strong> This is a shopping assistant. Purchases are made directly on external marketplaces like Jumia Ghana.
+                  </p>
                 </div>
 
-                {/* Summary Lines */}
+                {/* Summary by Platform */}
                 <div className="space-y-3 border-b border-gray-100 pb-4 mb-4">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Subtotal</span>
-                    <span>{formatPrice(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Tax (8%)</span>
-                    <span>{formatPrice(tax)}</span>
-                  </div>
-                </div>
-
-                {/* Total */}
-                <div className="flex justify-between text-xl font-bold text-gray-900 mb-6">
-                  <span>Total</span>
-                  <span className="text-blue-600">{formatPrice(total)}</span>
-                </div>
-
-                {/* Free Shipping Notice */}
-                {subtotal < 50 && (
-                  <div className="mb-6 p-3 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-700">
-                      Add {formatPrice(50 - subtotal)} more to get <strong>FREE shipping!</strong>
-                    </p>
-                  </div>
-                )}
-
-                {/* Checkout Button */}
-                <Button size="lg" className="w-full">
-                  Proceed to Checkout
-                </Button>
-
-                {/* Payment Icons */}
-                <div className="mt-6 text-center">
-                  <p className="text-xs text-gray-500 mb-2">Secure Payment</p>
-                  <div className="flex justify-center gap-2">
-                    {['Visa', 'MC', 'Amex', 'PayPal'].map((card) => (
-                      <div
-                        key={card}
-                        className="w-10 h-6 bg-gray-100 rounded text-xs flex items-center justify-center text-gray-400"
-                      >
-                        {card}
+                  {Object.entries(itemsByPlatform).map(([platform, platformItems]) => {
+                    const platformTotal = platformItems.reduce(
+                      (sum, item) => sum + item.price * item.quantity,
+                      0
+                    );
+                    return (
+                      <div key={platform} className="flex justify-between text-gray-600">
+                        <span className="capitalize">{platform}</span>
+                        <span>{formatPrice(platformTotal)}</span>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
+                </div>
+
+                {/* Total Estimate */}
+                <div className="flex justify-between text-xl font-bold text-gray-900 mb-6">
+                  <span>Estimated Total</span>
+                  <span className="text-blue-600">{formatPrice(subtotal)}</span>
+                </div>
+
+                <p className="text-xs text-gray-500 mb-4">
+                  * Final prices, shipping, and taxes are calculated at checkout on each marketplace.
+                </p>
+
+                {/* Buy All Buttons */}
+                <div className="space-y-2">
+                  {Object.entries(itemsByPlatform).map(([platform, platformItems]) => (
+                    <Button
+                      key={platform}
+                      size="lg"
+                      className="w-full bg-orange-500 hover:bg-orange-600"
+                      onClick={() => {
+                        // Open first product's URL as starting point
+                        const firstItem = platformItems[0];
+                        if (firstItem?.productUrl) {
+                          handleBuyOnPlatform(firstItem.productUrl);
+                        }
+                      }}
+                      leftIcon={<FiExternalLink className="w-4 h-4" />}
+                    >
+                      Shop on {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                    </Button>
+                  ))}
                 </div>
               </Card>
             </motion.div>

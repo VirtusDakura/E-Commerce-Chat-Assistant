@@ -116,11 +116,19 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     // Simulate API fetch
-    setIsLoading(true);
-    setTimeout(() => {
-      setProduct({ ...mockProduct, id: id || '1' });
-      setIsLoading(false);
+    let isMounted = true;
+    
+    const timer = setTimeout(() => {
+      if (isMounted) {
+        setProduct({ ...mockProduct, id: id || '1' });
+        setIsLoading(false);
+      }
     }, 500);
+    
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [id]);
 
   const handleAddToCart = () => {

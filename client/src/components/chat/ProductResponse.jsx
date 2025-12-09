@@ -3,6 +3,10 @@ import ChatProductCard from './ChatProductCard';
 import Avatar from '../ui/Avatar';
 
 const ProductResponse = ({ message }) => {
+  // Products from backend come as 'recommendations' array with:
+  // marketplace, productId, title, price, currency, image, rating, reviewsCount, productUrl
+  const products = message.products || [];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -15,7 +19,7 @@ const ProductResponse = ({ message }) => {
         <Avatar
           name="AI"
           size="sm"
-          className="bg-gradient-to-br from-blue-500 to-blue-700 text-white"
+          className="bg-linear-to-br from-blue-500 to-blue-700 text-white"
         />
       </div>
 
@@ -31,12 +35,22 @@ const ProductResponse = ({ message }) => {
         )}
 
         {/* Product Grid */}
-        {message.products && message.products.length > 0 && (
+        {products.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {message.products.map((product) => (
-              <ChatProductCard key={product.id} product={product} />
+            {products.map((product) => (
+              <ChatProductCard 
+                key={product.productId || product._id || product.id} 
+                product={product} 
+              />
             ))}
           </div>
+        )}
+
+        {/* Product count info */}
+        {products.length > 0 && (
+          <p className="text-xs text-gray-500">
+            Found {products.length} product{products.length !== 1 ? 's' : ''} on Jumia Ghana
+          </p>
         )}
 
         {/* Timestamp */}

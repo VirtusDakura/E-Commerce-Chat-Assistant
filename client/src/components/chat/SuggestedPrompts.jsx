@@ -1,26 +1,26 @@
 import { motion } from 'framer-motion';
-import { FiMessageCircle, FiShoppingBag, FiSearch, FiTrendingUp } from 'react-icons/fi';
+import { FiSmartphone, FiMonitor, FiShoppingBag, FiGift } from 'react-icons/fi';
 
 const suggestions = [
   {
+    icon: FiSmartphone,
+    text: 'I need a phone under 3000 GHS',
+    category: 'phones',
+  },
+  {
+    icon: FiMonitor,
+    text: 'Find me a laptop for work',
+    category: 'laptops',
+  },
+  {
     icon: FiShoppingBag,
-    text: 'Show me trending products',
-    category: 'shopping',
+    text: 'Show me fashion items',
+    category: 'fashion',
   },
   {
-    icon: FiSearch,
-    text: 'Find wireless headphones under $100',
-    category: 'search',
-  },
-  {
-    icon: FiTrendingUp,
-    text: 'What are the best-selling electronics?',
-    category: 'trending',
-  },
-  {
-    icon: FiMessageCircle,
-    text: 'Help me find a gift for my friend',
-    category: 'help',
+    icon: FiGift,
+    text: 'Help me find a gift for someone',
+    category: 'gifts',
   },
 ];
 
@@ -49,6 +49,9 @@ const SuggestedPrompts = ({ onSelect }) => {
           </motion.button>
         ))}
       </div>
+      <p className="text-xs text-gray-400 text-center">
+        Products are sourced from Jumia Ghana
+      </p>
     </div>
   );
 };

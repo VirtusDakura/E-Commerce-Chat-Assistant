@@ -43,7 +43,7 @@ const SignupPage = () => {
 
       await login(mockUser, mockToken);
       navigate('/');
-    } catch (err) {
+    } catch {
       setError('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -53,7 +53,7 @@ const SignupPage = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image/Branding */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-blue-600 to-blue-800 items-center justify-center p-8">
+      <div className="hidden lg:flex flex-1 bg-linear-to-br from-blue-600 to-blue-800 items-center justify-center p-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

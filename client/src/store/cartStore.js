@@ -9,53 +9,69 @@ const useCartStore = create(
       isLoading: false,
       error: null,
 
+      // Helper to get product ID (handles different ID field names from backend)
+      getProductId: (product) => product.id || product._id || product.productId,
+
       // Actions
       addItem: (product, quantity = 1) => {
-        const { items } = get();
-        const existingItem = items.find((item) => item.id === product.id);
+        const { items, getProductId } = get();
+        const productId = getProductId(product);
+        const existingItem = items.find((item) => getProductId(item) === productId);
 
         if (existingItem) {
           set({
             items: items.map((item) =>
-              item.id === product.id
+              getProductId(item) === productId
                 ? { ...item, quantity: item.quantity + quantity }
                 : item
             ),
           });
         } else {
+          // Store product with consistent fields for cart display
           set({
-            items: [...items, { ...product, quantity }],
+            items: [...items, {
+              id: productId,
+              _id: product._id,
+              productId: product.productId,
+              name: product.name || product.title,
+              price: product.price,
+              currency: product.currency || 'GHS',
+              image: product.image || product.images?.[0],
+              productUrl: product.productUrl || product.externalUrl,
+              marketplace: product.marketplace || 'jumia',
+              quantity,
+            }],
           });
         }
       },
 
       removeItem: (productId) => {
-        const { items } = get();
+        const { items, getProductId } = get();
         set({
-          items: items.filter((item) => item.id !== productId),
+          items: items.filter((item) => getProductId(item) !== productId),
         });
       },
 
       updateQuantity: (productId, quantity) => {
-        const { items } = get();
+        const { items, getProductId } = get();
         if (quantity <= 0) {
           set({
-            items: items.filter((item) => item.id !== productId),
+            items: items.filter((item) => getProductId(item) !== productId),
           });
         } else {
           set({
             items: items.map((item) =>
-              item.id === productId ? { ...item, quantity } : item
+              getProductId(item) === productId ? { ...item, quantity } : item
             ),
           });
         }
       },
 
       incrementQuantity: (productId) => {
-        const { items } = get();
+        const { items, getProductId } = get();
         set({
           items: items.map((item) =>
-            item.id === productId
+            getProductId(item) === productId
               ? { ...item, quantity: item.quantity + 1 }
               : item
           ),
@@ -63,17 +79,17 @@ const useCartStore = create(
       },
 
       decrementQuantity: (productId) => {
-        const { items, removeItem } = get();
-        const item = items.find((item) => item.id === productId);
+        const { items, removeItem, getProductId } = get();
+        const item = items.find((i) => getProductId(i) === productId);
         
         if (item && item.quantity <= 1) {
           removeItem(productId);
         } else {
           set({
-            items: items.map((item) =>
-              item.id === productId
-                ? { ...item, quantity: item.quantity - 1 }
-                : item
+            items: items.map((i) =>
+              getProductId(i) === productId
+                ? { ...i, quantity: i.quantity - 1 }
+                : i
             ),
           });
         }
@@ -110,14 +126,27 @@ const useCartStore = create(
       },
 
       isInCart: (productId) => {
-        const { items } = get();
-        return items.some((item) => item.id === productId);
+        const { items, getProductId } = get();
+        return items.some((item) => getProductId(item) === productId);
       },
 
       getItemQuantity: (productId) => {
-        const { items } = get();
-        const item = items.find((item) => item.id === productId);
+        const { items, getProductId } = get();
+        const item = items.find((i) => getProductId(i) === productId);
         return item ? item.quantity : 0;
+      },
+
+      // Get items grouped by marketplace/platform
+      getItemsByPlatform: () => {
+        const { items } = get();
+        return items.reduce((groups, item) => {
+          const platform = item.marketplace || 'other';
+          if (!groups[platform]) {
+            groups[platform] = [];
+          }
+          groups[platform].push(item);
+          return groups;
+        }, {});
       },
     }),
     {

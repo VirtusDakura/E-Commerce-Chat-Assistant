@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { FiMessageCircle, FiPlus, FiTrash2 } from 'react-icons/fi';
 import {
   ChatBubble,
@@ -11,16 +12,24 @@ import {
 import Button from '../components/ui/Button';
 import { useChatStore } from '../store';
 import { chatService } from '../services/chatService';
+import { toast } from '../components/ui/Toast';
 
 const ChatPage = () => {
   const messagesEndRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPromptHandled = useRef(false);
+  const pendingPrompt = useRef(null);
+  
   const {
     messages,
     isTyping,
+    currentSessionId,
     setTyping,
+    setSessionId,
     addUserMessage,
     addAIMessage,
     clearMessages,
+    startNewConversation,
   } = useChatStore();
 
   const [showSuggestions, setShowSuggestions] = useState(messages.length === 0);
@@ -33,32 +42,68 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
 
-  const handleSendMessage = async (content) => {
+  // Define sendMessage function
+  const sendMessage = useCallback(async (content) => {
     // Add user message
     addUserMessage(content);
     setShowSuggestions(false);
     setTyping(true);
 
     try {
-      // Get AI response
-      const response = await chatService.sendMessage(content);
+      // Send message to backend with session ID for conversation continuity
+      const response = await chatService.sendMessage(content, currentSessionId);
       setTyping(false);
+
+      // Update session ID if new conversation
+      if (response.sessionId && response.sessionId !== currentSessionId) {
+        setSessionId(response.sessionId);
+      }
+
+      // Add AI response
       addAIMessage(response);
     } catch (error) {
       setTyping(false);
+      const errorMessage = error.response?.data?.message || "I'm sorry, I encountered an error. Please try again.";
       addAIMessage({
-        type: 'text',
-        content: "I'm sorry, I encountered an error. Please try again.",
+        reply: errorMessage,
+        recommendations: [],
       });
+      toast.error('Error', errorMessage);
     }
+  }, [addUserMessage, setTyping, currentSessionId, setSessionId, addAIMessage]);
+
+  // Handle initial prompt from URL (e.g., from homepage "Try Asking..." cards)
+  useEffect(() => {
+    const promptFromUrl = searchParams.get('prompt');
+    if (promptFromUrl && !initialPromptHandled.current) {
+      initialPromptHandled.current = true;
+      pendingPrompt.current = promptFromUrl;
+      // Clear the URL parameter
+      setSearchParams({});
+      // Start fresh conversation
+      startNewConversation();
+    }
+  }, [searchParams, setSearchParams, startNewConversation]);
+
+  // Process pending prompt after conversation is ready
+  useEffect(() => {
+    if (pendingPrompt.current && messages.length === 0 && !isTyping) {
+      const prompt = pendingPrompt.current;
+      pendingPrompt.current = null;
+      sendMessage(prompt);
+    }
+  }, [messages.length, isTyping, sendMessage]);
+
+  const handleSendMessage = (content) => {
+    sendMessage(content);
   };
 
   const handleSuggestionSelect = (suggestion) => {
-    handleSendMessage(suggestion);
+    sendMessage(suggestion);
   };
 
   const handleNewChat = () => {
-    clearMessages();
+    startNewConversation();
     setShowSuggestions(true);
   };
 

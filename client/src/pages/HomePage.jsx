@@ -2,121 +2,86 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   FiMessageCircle,
-  FiSearch,
   FiShoppingCart,
   FiHeart,
   FiZap,
-  FiCpu,
   FiTruck,
   FiShield,
-  FiArrowRight,
+  FiExternalLink,
+  FiSend,
 } from 'react-icons/fi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { ProductGrid } from '../components/product';
 
-// Mock featured products
-const featuredProducts = [
+// How it works steps
+const howItWorks = [
   {
-    id: '1',
-    name: 'Wireless Bluetooth Headphones Pro',
-    price: 79.99,
-    originalPrice: 129.99,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-    rating: 4.5,
-    reviewCount: 128,
-    category: 'Electronics',
-    discount: 38,
+    step: 1,
+    title: 'Start a Conversation',
+    description: 'Tell our AI what you\'re looking for in natural language - just like chatting with a friend',
+    icon: FiMessageCircle,
+    color: 'blue',
   },
   {
-    id: '2',
-    name: 'Smart Watch Series 5',
-    price: 199.99,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-    rating: 4.8,
-    reviewCount: 256,
-    category: 'Electronics',
-    isNew: true,
+    step: 2,
+    title: 'Get Recommendations',
+    description: 'Our AI searches Jumia Ghana and finds the best products matching your needs',
+    icon: FiZap,
+    color: 'purple',
   },
   {
-    id: '3',
-    name: 'Premium Cotton T-Shirt',
-    price: 29.99,
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
-    rating: 4.3,
-    reviewCount: 89,
-    category: 'Fashion',
+    step: 3,
+    title: 'Save Your Favorites',
+    description: 'Add products to your cart or wishlist to keep track of items you love',
+    icon: FiHeart,
+    color: 'red',
   },
   {
-    id: '4',
-    name: 'Portable Bluetooth Speaker',
-    price: 49.99,
-    originalPrice: 69.99,
-    image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
-    rating: 4.6,
-    reviewCount: 167,
-    category: 'Electronics',
-    discount: 28,
+    step: 4,
+    title: 'Buy on Jumia',
+    description: 'Click to purchase directly on Jumia Ghana - secure and reliable shopping',
+    icon: FiExternalLink,
+    color: 'green',
   },
 ];
 
-// Categories
-const categories = [
-  {
-    name: 'Electronics',
-    icon: '🔌',
-    image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400',
-    count: 1250,
-  },
-  {
-    name: 'Fashion',
-    icon: '👕',
-    image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=400',
-    count: 2340,
-  },
-  {
-    name: 'Home & Garden',
-    icon: '🏡',
-    image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400',
-    count: 890,
-  },
-  {
-    name: 'Books',
-    icon: '📚',
-    image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
-    count: 1560,
-  },
-];
-
-// Features
+// Features of the AI assistant
 const features = [
   {
-    icon: FiCpu,
-    title: 'AI-Powered Search',
-    description: 'Our intelligent AI understands what you\'re looking for and suggests the perfect products.',
+    icon: FiMessageCircle,
+    title: 'Natural Conversations',
+    description: 'Chat naturally with our AI - ask questions, refine searches, and get personalized help',
   },
   {
-    icon: FiMessageCircle,
-    title: 'Chat Assistant',
-    description: 'Get personalized recommendations through natural conversation with our AI shopping assistant.',
+    icon: FiZap,
+    title: 'Smart Recommendations',
+    description: 'AI-powered product matching from Jumia Ghana\'s extensive catalog',
   },
   {
     icon: FiTruck,
-    title: 'Fast Delivery',
-    description: 'Free shipping on orders over $50 with express delivery options available.',
+    title: 'Real Products',
+    description: 'All products come directly from Jumia Ghana with real prices in GHS',
   },
   {
     icon: FiShield,
-    title: 'Secure Shopping',
-    description: 'Your data is protected with enterprise-grade security and encrypted transactions.',
+    title: 'Secure & Trusted',
+    description: 'Buy confidently through Jumia\'s secure platform with buyer protection',
   },
+];
+
+// Sample prompts to show users
+const samplePrompts = [
+  'I need a smartphone under 2000 GHS with good camera',
+  'Show me gaming laptops for students',
+  'What\'s a good washing machine for a family of 4?',
+  'I want wireless earbuds for running',
 ];
 
 const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white overflow-hidden">
+      <section className="relative bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 text-white overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -134,15 +99,15 @@ const HomePage = () => {
             >
               <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm mb-6">
                 <FiZap className="w-4 h-4" />
-                AI-Powered Shopping Experience
+                Powered by AI • Products from Jumia Ghana
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 Shop Smarter with
-                <span className="block text-blue-200">AI Assistant</span>
+                <span className="block text-blue-200">Your AI Assistant</span>
               </h1>
               <p className="text-lg text-blue-100 mb-8 max-w-lg">
-                Discover the perfect products through intelligent conversation. 
-                Our AI understands your needs and recommends exactly what you're looking for.
+                Tell us what you need, and our AI will find the perfect products from Jumia Ghana. 
+                No more endless searching - just natural conversation.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/chat">
@@ -151,52 +116,68 @@ const HomePage = () => {
                     className="bg-white text-blue-600 hover:bg-blue-50"
                     leftIcon={<FiMessageCircle className="w-5 h-5" />}
                   >
-                    Chat Now
-                  </Button>
-                </Link>
-                <Link to="/about">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white/10"
-                  >
-                    Learn More
+                    Start Chatting
                   </Button>
                 </Link>
               </div>
             </motion.div>
 
-            {/* Hero Image/Illustration */}
+            {/* Chat Preview */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden lg:block"
+              className="relative"
             >
-              <div className="relative">
-                {/* Chat Preview Card */}
-                <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md mx-auto">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                      <FiMessageCircle className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">ShopSmart AI</h4>
-                      <p className="text-xs text-green-500">Online now</p>
+              <div className="bg-white rounded-3xl shadow-2xl p-6 relative">
+                {/* Chat Header */}
+                <div className="flex items-center gap-3 pb-4 border-b">
+                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                    <FiMessageCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">ShopSmart AI</h3>
+                    <span className="text-sm text-green-500">● Online</span>
+                  </div>
+                </div>
+
+                {/* Chat Messages Preview */}
+                <div className="py-6 space-y-4">
+                  {/* User Message */}
+                  <div className="flex justify-end">
+                    <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm max-w-[80%]">
+                      I need a good phone under 2000 GHS
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  {/* AI Response */}
+                  <div className="flex justify-start">
                     <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-gray-800 max-w-[80%]">
-                      Hi! I can help you find the perfect products. What are you looking for today?
+                      I found some great options! 📱 Here are 3 phones under 2000 GHS with excellent reviews...
                     </div>
-                    <div className="bg-blue-600 rounded-2xl rounded-tr-sm px-4 py-3 text-sm text-white max-w-[80%] ml-auto">
-                      I need wireless headphones under $100
+                  </div>
+                  {/* Product Cards Preview */}
+                  <div className="flex gap-2 overflow-hidden">
+                    <div className="bg-gray-50 rounded-lg p-3 min-w-[140px]">
+                      <div className="w-full h-16 bg-gray-200 rounded mb-2"></div>
+                      <p className="text-xs text-gray-600 truncate">Samsung Galaxy A24</p>
+                      <p className="text-sm font-bold text-gray-900">GHS 1,899</p>
                     </div>
-                    <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-gray-800 max-w-[80%]">
-                      Great choice! I found 3 top-rated options for you... ✨
+                    <div className="bg-gray-50 rounded-lg p-3 min-w-[140px]">
+                      <div className="w-full h-16 bg-gray-200 rounded mb-2"></div>
+                      <p className="text-xs text-gray-600 truncate">Xiaomi Redmi 12</p>
+                      <p className="text-sm font-bold text-gray-900">GHS 1,650</p>
                     </div>
                   </div>
                 </div>
+
+                {/* Input Preview */}
+                <div className="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-2">
+                  <span className="text-gray-400 text-sm flex-1">Ask me anything...</span>
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <FiSend className="w-4 h-4 text-white" />
+                  </div>
+                </div>
+
                 {/* Floating Elements */}
                 <motion.div
                   animate={{ y: [0, -10, 0] }}
@@ -212,7 +193,7 @@ const HomePage = () => {
                   className="absolute -bottom-4 -left-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
                 >
                   <FiHeart className="w-4 h-4 inline mr-2" />
-                  Saved!
+                  Wishlisted!
                 </motion.div>
               </div>
             </motion.div>
@@ -227,6 +208,118 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Sample Prompts Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              Try Asking...
+            </h2>
+            <p className="text-gray-600">Click any prompt to start shopping</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            {samplePrompts.map((prompt, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Link
+                  to={`/chat?prompt=${encodeURIComponent(prompt)}`}
+                  className="block"
+                >
+                  <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-500">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                        <FiMessageCircle className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <p className="text-gray-700 text-sm leading-relaxed">{prompt}</p>
+                    </div>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              How It Works
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              From conversation to purchase in just a few simple steps
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="relative"
+              >
+                {/* Connector Line */}
+                {index < howItWorks.length - 1 && (
+                  <div className="hidden lg:block absolute top-10 left-1/2 w-full h-0.5 bg-gray-200" />
+                )}
+                
+                <div className="relative text-center">
+                  {/* Step Number */}
+                  <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center relative z-10 ${
+                    item.color === 'blue' ? 'bg-blue-100' :
+                    item.color === 'purple' ? 'bg-purple-100' :
+                    item.color === 'red' ? 'bg-red-100' :
+                    'bg-green-100'
+                  }`}>
+                    <item.icon className={`w-8 h-8 ${
+                      item.color === 'blue' ? 'text-blue-600' :
+                      item.color === 'purple' ? 'text-purple-600' :
+                      item.color === 'red' ? 'text-red-600' :
+                      'text-green-600'
+                    }`} />
+                    <span className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                      item.color === 'blue' ? 'bg-blue-600' :
+                      item.color === 'purple' ? 'bg-purple-600' :
+                      item.color === 'red' ? 'bg-red-600' :
+                      'bg-green-600'
+                    }`}>
+                      {item.step}
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {item.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -237,10 +330,10 @@ const HomePage = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              How AI Shopping Works
+              Why Shop With AI?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Experience a revolutionary way to shop online with our intelligent assistant
+              Experience a smarter way to find products on Jumia Ghana
             </p>
           </motion.div>
 
@@ -270,94 +363,55 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-20">
+      {/* Info Banner */}
+      <section className="py-12 bg-blue-50 border-y border-blue-100">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-between mb-12"
-          >
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                Shop by Category
-              </h2>
-              <p className="text-gray-600">Browse products across popular categories</p>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 text-center md:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <FiExternalLink className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Real Products</h4>
+                <p className="text-sm text-gray-600">From Jumia Ghana</p>
+              </div>
             </div>
-            <Link to="/categories" className="hidden md:flex items-center gap-2 text-blue-600 font-medium hover:gap-3 transition-all">
-              View All <FiArrowRight />
-            </Link>
-          </motion.div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Link to={`/category/${category.name.toLowerCase()}`}>
-                  <div className="group relative aspect-square rounded-2xl overflow-hidden">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                      <span className="text-3xl mb-2 block">{category.icon}</span>
-                      <h3 className="text-lg font-semibold">{category.name}</h3>
-                      <p className="text-sm text-white/70">{category.count.toLocaleString()} products</p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <FiShield className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Secure Checkout</h4>
+                <p className="text-sm text-gray-600">Buy directly on Jumia</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                <FiTruck className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Ghana Delivery</h4>
+                <p className="text-sm text-gray-600">Delivered to your door</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Products Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-between mb-12"
-          >
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                Featured Products
-              </h2>
-              <p className="text-gray-600">Handpicked products just for you</p>
-            </div>
-            <Link to="/products" className="hidden md:flex items-center gap-2 text-blue-600 font-medium hover:gap-3 transition-all">
-              View All <FiArrowRight />
-            </Link>
-          </motion.div>
-
-          <ProductGrid products={featuredProducts} columns={4} />
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="py-20 bg-blue-600">
+      <section className="py-20 bg-linear-to-br from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to Start Shopping?
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Ready to Find What You Need?
             </h2>
             <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
-              Let our AI assistant help you find exactly what you're looking for.
-              Start a conversation now and discover amazing products!
+              Start a conversation with our AI and discover amazing products from Jumia Ghana. 
+              No more endless browsing - just tell us what you want!
             </p>
             <Link to="/chat">
               <Button
@@ -365,7 +419,7 @@ const HomePage = () => {
                 className="bg-white text-blue-600 hover:bg-blue-50"
                 leftIcon={<FiMessageCircle className="w-5 h-5" />}
               >
-                Start Chatting
+                Start Shopping with AI
               </Button>
             </Link>
           </motion.div>

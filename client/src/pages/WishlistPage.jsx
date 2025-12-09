@@ -1,11 +1,19 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiHeart, FiShoppingCart, FiTrash2, FiArrowLeft } from 'react-icons/fi';
+import { FiHeart, FiShoppingCart, FiTrash2, FiExternalLink, FiMessageCircle } from 'react-icons/fi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Rating from '../components/ui/Rating';
 import { useWishlistStore, useCartStore } from '../store';
-import { formatPrice } from '../lib/utils';
+import { toast } from '../components/ui/Toast';
+
+// Format price with currency (GHS for Jumia Ghana)
+const formatPrice = (price, currency = 'GHS') => {
+  return new Intl.NumberFormat('en-GH', {
+    style: 'currency',
+    currency: currency,
+  }).format(price);
+};
 
 const WishlistPage = () => {
   const { items, removeItem, clearWishlist } = useWishlistStore();
@@ -14,6 +22,13 @@ const WishlistPage = () => {
   const handleMoveToCart = (item) => {
     addToCart(item);
     removeItem(item.id);
+    toast.success('Moved to Cart', `${item.name} has been added to your cart`);
+  };
+
+  const handleBuyNow = (productUrl) => {
+    if (productUrl) {
+      window.open(productUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   if (items.length === 0) {
@@ -30,12 +45,11 @@ const WishlistPage = () => {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h1>
             <p className="text-gray-600 mb-8">
-              Save items you love by clicking the heart icon on any product. 
-              They'll be waiting for you here!
+              Chat with our AI assistant to find products and save your favorites here!
             </p>
-            <Link to="/">
-              <Button size="lg" leftIcon={<FiArrowLeft className="w-5 h-5" />}>
-                Start Shopping
+            <Link to="/chat">
+              <Button size="lg" leftIcon={<FiMessageCircle className="w-5 h-5" />}>
+                Find Products with AI
               </Button>
             </Link>
           </motion.div>
@@ -55,7 +69,7 @@ const WishlistPage = () => {
         >
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
-            <p className="text-gray-600">{items.length} items saved</p>
+            <p className="text-gray-600">{items.length} items saved for later</p>
           </div>
           <Button
             variant="ghost"
@@ -77,34 +91,33 @@ const WishlistPage = () => {
             >
               <Card variant="elevated" className="overflow-hidden group">
                 {/* Image */}
-                <Link to={`/product/${item.id}`}>
-                  <div className="relative aspect-square bg-gray-100">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        removeItem(item.id);
-                      }}
-                      className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors"
-                    >
-                      <FiTrash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </Link>
+                <div className="relative aspect-square bg-gray-100">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {/* Marketplace Badge */}
+                  {item.marketplace && (
+                    <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-orange-500 text-white rounded-full capitalize">
+                      {item.marketplace}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    <FiTrash2 className="w-4 h-4" />
+                  </button>
+                </div>
 
                 {/* Details */}
                 <div className="p-4">
-                  <Link to={`/product/${item.id}`}>
-                    <h3 className="font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-2 mb-2">
-                      {item.name}
-                    </h3>
-                  </Link>
+                  <h3 className="font-medium text-gray-900 line-clamp-2 mb-2">
+                    {item.name}
+                  </h3>
 
-                  {item.rating && (
+                  {item.rating > 0 && (
                     <div className="mb-2">
                       <Rating value={item.rating} size="sm" />
                     </div>
@@ -112,23 +125,49 @@ const WishlistPage = () => {
 
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-lg font-bold text-blue-600">
-                      {formatPrice(item.price)}
+                      {formatPrice(item.price, item.currency)}
                     </span>
-                    {item.originalPrice && (
-                      <span className="text-sm text-gray-400 line-through">
-                        {formatPrice(item.originalPrice)}
+                    {/* Price change indicator */}
+                    {item.savedPrice && item.price !== item.savedPrice && (
+                      <span className={`text-xs px-2 py-0.5 rounded ${
+                        item.price < item.savedPrice 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {item.price < item.savedPrice ? '↓ Price dropped!' : '↑ Price increased'}
                       </span>
                     )}
                   </div>
 
-                  <Button
-                    size="sm"
-                    className="w-full"
-                    leftIcon={<FiShoppingCart className="w-4 h-4" />}
-                    onClick={() => handleMoveToCart(item)}
-                  >
-                    Move to Cart
-                  </Button>
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      leftIcon={<FiShoppingCart className="w-4 h-4" />}
+                      onClick={() => handleMoveToCart(item)}
+                    >
+                      Cart
+                    </Button>
+                    {item.productUrl && (
+                      <Button
+                        size="sm"
+                        className="flex-1 bg-orange-500 hover:bg-orange-600"
+                        leftIcon={<FiExternalLink className="w-4 h-4" />}
+                        onClick={() => handleBuyNow(item.productUrl)}
+                      >
+                        Buy
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Added date */}
+                  {item.addedAt && (
+                    <p className="text-xs text-gray-400 mt-3 text-center">
+                      Saved {new Date(item.addedAt).toLocaleDateString()}
+                    </p>
+                  )}
                 </div>
               </Card>
             </motion.div>
@@ -137,9 +176,9 @@ const WishlistPage = () => {
 
         {/* Back to Shopping */}
         <div className="mt-8 text-center">
-          <Link to="/">
-            <Button variant="ghost" leftIcon={<FiArrowLeft className="w-4 h-4" />}>
-              Continue Shopping
+          <Link to="/chat">
+            <Button variant="ghost" leftIcon={<FiMessageCircle className="w-4 h-4" />}>
+              Find More Products
             </Button>
           </Link>
         </div>

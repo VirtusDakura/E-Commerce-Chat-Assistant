@@ -3,7 +3,7 @@ import api from './api';
 export const cartService = {
   /**
    * Get user's cart
-   * @returns {Promise} - Cart data
+   * @returns {Promise} - Cart data with platform groups
    */
   async getCart() {
     const response = await api.get('/cart');
@@ -12,7 +12,7 @@ export const cartService = {
 
   /**
    * Add item to cart
-   * @param {string} productId - Product ID
+   * @param {string} productId - Product ID (MongoDB _id)
    * @param {number} quantity - Quantity to add
    * @returns {Promise} - Updated cart
    */
@@ -23,22 +23,22 @@ export const cartService = {
 
   /**
    * Update cart item quantity
-   * @param {string} productId - Product ID
+   * @param {string} itemId - Cart item ID
    * @param {number} quantity - New quantity
    * @returns {Promise} - Updated cart
    */
-  async updateQuantity(productId, quantity) {
-    const response = await api.put('/cart/update', { productId, quantity });
+  async updateQuantity(itemId, quantity) {
+    const response = await api.put(`/cart/update/${itemId}`, { quantity });
     return response.data;
   },
 
   /**
    * Remove item from cart
-   * @param {string} productId - Product ID
+   * @param {string} itemId - Cart item ID
    * @returns {Promise} - Updated cart
    */
-  async removeFromCart(productId) {
-    const response = await api.delete(`/cart/remove/${productId}`);
+  async removeFromCart(itemId) {
+    const response = await api.delete(`/cart/remove/${itemId}`);
     return response.data;
   },
 
@@ -48,16 +48,6 @@ export const cartService = {
    */
   async clearCart() {
     const response = await api.delete('/cart/clear');
-    return response.data;
-  },
-
-  /**
-   * Apply coupon code
-   * @param {string} code - Coupon code
-   * @returns {Promise} - Updated cart with discount
-   */
-  async applyCoupon(code) {
-    const response = await api.post('/cart/coupon', { code });
     return response.data;
   },
 };

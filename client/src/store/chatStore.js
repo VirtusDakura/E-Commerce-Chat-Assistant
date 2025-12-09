@@ -5,7 +5,7 @@ const useChatStore = create((set, get) => ({
   // State
   messages: [],
   conversations: [],
-  currentConversationId: null,
+  currentSessionId: null,
   isTyping: false,
   isLoading: false,
   error: null,
@@ -33,53 +33,53 @@ const useChatStore = create((set, get) => ({
   addAIMessage: (response) => {
     return get().addMessage({
       role: 'assistant',
-      ...response,
+      type: response.recommendations?.length > 0 ? 'products' : 'text',
+      content: response.reply,
+      products: response.recommendations || [],
+      action: response.action,
     });
   },
+
+  setSessionId: (sessionId) => set({ currentSessionId: sessionId }),
 
   setTyping: (isTyping) => set({ isTyping }),
 
-  clearMessages: () => set({ messages: [] }),
+  clearMessages: () => set({ messages: [], currentSessionId: null }),
 
-  setCurrentConversation: (conversationId) => {
-    set({ currentConversationId: conversationId });
-  },
+  setConversations: (conversations) => set({ conversations }),
 
   startNewConversation: () => {
-    const newConversationId = generateId();
-    const { conversations } = get();
     set({
-      currentConversationId: newConversationId,
+      currentSessionId: null,
       messages: [],
-      conversations: [
-        ...conversations,
-        {
-          id: newConversationId,
-          createdAt: new Date().toISOString(),
-          title: 'New Conversation',
-        },
-      ],
-    });
-    return newConversationId;
-  },
-
-  updateConversationTitle: (conversationId, title) => {
-    const { conversations } = get();
-    set({
-      conversations: conversations.map((conv) =>
-        conv.id === conversationId ? { ...conv, title } : conv
-      ),
     });
   },
 
-  deleteConversation: (conversationId) => {
-    const { conversations, currentConversationId } = get();
+  deleteConversation: (sessionId) => {
+    const { conversations, currentSessionId } = get();
     set({
-      conversations: conversations.filter((conv) => conv.id !== conversationId),
-      ...(currentConversationId === conversationId && {
-        currentConversationId: null,
+      conversations: conversations.filter((conv) => conv.sessionId !== sessionId),
+      ...(currentSessionId === sessionId && {
+        currentSessionId: null,
         messages: [],
       }),
+    });
+  },
+
+  loadConversation: (conversation) => {
+    // Load messages from a conversation
+    const messages = conversation.messages?.map((msg) => ({
+      id: msg._id || generateId(),
+      role: msg.role,
+      type: msg.suggestedProducts?.length > 0 ? 'products' : 'text',
+      content: msg.content,
+      products: msg.suggestedProducts || [],
+      timestamp: msg.metadata?.timestamp || new Date().toISOString(),
+    })) || [];
+
+    set({
+      currentSessionId: conversation.sessionId,
+      messages,
     });
   },
 
@@ -92,10 +92,7 @@ const useChatStore = create((set, get) => ({
   // Getters
   getMessages: () => get().messages,
   getIsTyping: () => get().isTyping,
-  getCurrentConversation: () => {
-    const { conversations, currentConversationId } = get();
-    return conversations.find((conv) => conv.id === currentConversationId);
-  },
+  getSessionId: () => get().currentSessionId,
 }));
 
 export default useChatStore;
