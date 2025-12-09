@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { wishlistService } from '../services/wishlistService';
+import { wishlistAPI } from '../services/api';
 
 const useWishlistStore = create(
   persist(
@@ -17,8 +17,7 @@ const useWishlistStore = create(
       fetchWishlist: async () => {
         set({ isLoading: true, error: null });
         try {
-          const response = await wishlistService.getWishlist();
-          // Backend returns { items: [...] } with populated product info
+          const response = await wishlistAPI.getWishlist();
           const backendItems = response.data.items.map((item) => ({
             id: item._id,
             _id: item._id,

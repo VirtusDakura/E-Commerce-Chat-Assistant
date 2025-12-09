@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { cartService } from '../services/cartService';
+import { cartAPI } from '../services/api';
 
 const useCartStore = create(
   persist(
@@ -17,8 +17,7 @@ const useCartStore = create(
       fetchCart: async () => {
         set({ isLoading: true, error: null });
         try {
-          const response = await cartService.getCart();
-          // Backend returns { cart: { items: [...] }, platformGroups, totalEstimate }
+          const response = await cartAPI.getCart();
           const backendItems = response.data.cart.items.map((item) => ({
             id: item._id,
             _id: item._id,

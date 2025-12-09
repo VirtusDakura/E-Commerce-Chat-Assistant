@@ -5,8 +5,7 @@ import Button from '../ui/Button';
 import Rating from '../ui/Rating';
 import { useCartStore, useWishlistStore } from '../../store';
 import { toast } from '../ui/Toast';
-import { cartService } from '../../services/cartService';
-import { wishlistService } from '../../services/wishlistService';
+import { cartAPI, wishlistAPI } from '../../services/api';
 
 // Format price with currency (GHS for Jumia Ghana)
 const formatPrice = (price, currency = 'GHS') => {
@@ -35,7 +34,6 @@ const ChatProductCard = ({ product, compact = false }) => {
   const productDbId = product._id; // MongoDB ID for cart/wishlist operations
 
   const handleAddToCart = async () => {
-    // Add to local store for immediate UI feedback
     addToCartLocal({
       id: product.productId || product._id,
       name: productName,
@@ -45,13 +43,11 @@ const ChatProductCard = ({ product, compact = false }) => {
       marketplace: product.marketplace,
     });
 
-    // If user is authenticated, also add to backend
     if (productDbId) {
       try {
-        await cartService.addToCart(productDbId);
+        await cartAPI.addToCart(productDbId);
         toast.success('Added to Cart', `${productName} has been added to your cart`);
       } catch {
-        // Already added locally, show success anyway
         toast.success('Added to Cart', `${productName} has been added to your cart`);
       }
     } else {
@@ -60,7 +56,6 @@ const ChatProductCard = ({ product, compact = false }) => {
   };
 
   const handleToggleWishlist = async () => {
-    // Toggle in local store
     toggleWishlistLocal({
       id: product.productId || product._id,
       name: productName,
@@ -70,18 +65,15 @@ const ChatProductCard = ({ product, compact = false }) => {
       marketplace: product.marketplace,
     });
 
-    // If user is authenticated and we have DB ID, sync with backend
     if (productDbId) {
       try {
         if (isInWishlist) {
-          // Would need item ID to remove - for now just show toast
           toast.info('Removed from Wishlist', `${productName} removed`);
         } else {
-          await wishlistService.addToWishlist(productDbId);
+          await wishlistAPI.addToWishlist(productDbId);
           toast.success('Added to Wishlist', `${productName} saved to wishlist`);
         }
       } catch {
-        // Already toggled locally
         toast.success('Updated Wishlist', 'Wishlist updated');
       }
     } else {
