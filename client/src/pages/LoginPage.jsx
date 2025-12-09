@@ -7,7 +7,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Alert from '../components/ui/Alert';
 import { useAuthStore } from '../store';
-import { authService } from '../services/authService';
+import { authAPI } from '../services/api';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,13 +27,11 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // Call real backend API
-      const response = await authService.login({
+      const response = await authAPI.login({
         email: data.email,
         password: data.password,
       });
 
-      // Handle successful login
       const { user, token } = response.data;
       await login(user, token);
       navigate('/');

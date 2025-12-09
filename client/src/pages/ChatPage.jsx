@@ -11,7 +11,7 @@ import {
 } from '../components/chat';
 import Button from '../components/ui/Button';
 import { useChatStore } from '../store';
-import { chatService } from '../services/chatService';
+import { chatAPI } from '../services/api';
 import { toast } from '../components/ui/Toast';
 
 const ChatPage = () => {
@@ -44,22 +44,18 @@ const ChatPage = () => {
 
   // Define sendMessage function
   const sendMessage = useCallback(async (content) => {
-    // Add user message
     addUserMessage(content);
     setShowSuggestions(false);
     setTyping(true);
 
     try {
-      // Send message to backend with session ID for conversation continuity
-      const response = await chatService.sendMessage(content, currentSessionId);
+      const response = await chatAPI.sendMessage(content, currentSessionId);
       setTyping(false);
 
-      // Update session ID if new conversation
       if (response.sessionId && response.sessionId !== currentSessionId) {
         setSessionId(response.sessionId);
       }
 
-      // Add AI response
       addAIMessage(response);
     } catch (error) {
       setTyping(false);

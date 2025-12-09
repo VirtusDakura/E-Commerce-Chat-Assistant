@@ -17,9 +17,7 @@ import Rating from '../components/ui/Rating';
 import Spinner from '../components/ui/Spinner';
 import { ProductImageGallery } from '../components/product';
 import { useCartStore, useWishlistStore } from '../store';
-import { productService } from '../services/productService';
-import { cartService } from '../services/cartService';
-import { wishlistService } from '../services/wishlistService';
+import { productAPI, cartAPI, wishlistAPI } from '../services/api';
 import { toast } from '../components/ui/Toast';
 
 // Format price with currency (GHS for Jumia Ghana)
@@ -55,7 +53,7 @@ const ProductDetailPage = () => {
 
       try {
         setIsLoading(true);
-        const response = await productService.getProduct(`${marketplace}/${productId}`);
+        const response = await productAPI.getProduct(marketplace, productId);
         if (isMounted && response.data) {
           setProduct(response.data);
         }
@@ -94,7 +92,7 @@ const ProductDetailPage = () => {
       // Sync with backend if product has MongoDB ID
       if (product._id) {
         try {
-          await cartService.addToCart(product._id, quantity);
+          await cartAPI.addToCart(product._id, quantity);
         } catch (err) {
           console.error('Failed to sync cart with backend:', err);
         }
@@ -123,7 +121,7 @@ const ProductDetailPage = () => {
           if (isInWishlist) {
             toast.info('Removed from Wishlist');
           } else {
-            await wishlistService.addToWishlist(product._id);
+            await wishlistAPI.addToWishlist(product._id);
             toast.success('Added to Wishlist');
           }
         } catch (err) {
