@@ -88,7 +88,7 @@ You can manage cookie preferences through your browser settings.`,
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
+      <section className="bg-linear-to-br from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

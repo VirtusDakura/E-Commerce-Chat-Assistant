@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { FiX, FiAlertCircle, FiCheckCircle, FiInfo, FiAlertTriangle } from 'react-icons/fi';
 import { cn } from '../../lib/utils';
 
@@ -50,7 +50,7 @@ const Alert = ({
           {...props}
         >
           <div className="flex">
-            <div className="flex-shrink-0">{config.icon}</div>
+            <div className="shrink-0">{config.icon}</div>
             <div className="ml-3 flex-1">
               {title && (
                 <h3 className="text-sm font-medium mb-1">{title}</h3>
@@ -60,7 +60,7 @@ const Alert = ({
             {dismissible && (
               <button
                 type="button"
-                className="flex-shrink-0 ml-3 inline-flex rounded-md p-1.5 hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                className="shrink-0 ml-3 inline-flex rounded-md p-1.5 hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-offset-2"
                 onClick={onDismiss}
               >
                 <FiX className="h-5 w-5" />

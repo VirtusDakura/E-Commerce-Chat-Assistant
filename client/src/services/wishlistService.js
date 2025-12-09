@@ -3,7 +3,7 @@ import api from './api';
 export const wishlistService = {
   /**
    * Get user's wishlist
-   * @returns {Promise} - Wishlist items
+   * @returns {Promise} - Wishlist items with price change tracking
    */
   async getWishlist() {
     const response = await api.get('/wishlist');
@@ -12,41 +12,22 @@ export const wishlistService = {
 
   /**
    * Add item to wishlist
-   * @param {string} productId - Product ID
+   * @param {string} productId - Product ID (MongoDB _id)
+   * @param {Object} options - Optional: notes, priority, priceAlertEnabled, targetPrice
    * @returns {Promise} - Updated wishlist
    */
-  async addToWishlist(productId) {
-    const response = await api.post('/wishlist/add', { productId });
+  async addToWishlist(productId, options = {}) {
+    const response = await api.post('/wishlist', { productId, ...options });
     return response.data;
   },
 
   /**
    * Remove item from wishlist
-   * @param {string} productId - Product ID
+   * @param {string} itemId - Wishlist item ID
    * @returns {Promise} - Updated wishlist
    */
-  async removeFromWishlist(productId) {
-    const response = await api.delete(`/wishlist/remove/${productId}`);
-    return response.data;
-  },
-
-  /**
-   * Check if product is in wishlist
-   * @param {string} productId - Product ID
-   * @returns {Promise} - Boolean
-   */
-  async isInWishlist(productId) {
-    const response = await api.get(`/wishlist/check/${productId}`);
-    return response.data.isInWishlist;
-  },
-
-  /**
-   * Move item from wishlist to cart
-   * @param {string} productId - Product ID
-   * @returns {Promise}
-   */
-  async moveToCart(productId) {
-    const response = await api.post('/wishlist/move-to-cart', { productId });
+  async removeFromWishlist(itemId) {
+    const response = await api.delete(`/wishlist/${itemId}`);
     return response.data;
   },
 
@@ -55,7 +36,7 @@ export const wishlistService = {
    * @returns {Promise}
    */
   async clearWishlist() {
-    const response = await api.delete('/wishlist/clear');
+    const response = await api.delete('/wishlist');
     return response.data;
   },
 };

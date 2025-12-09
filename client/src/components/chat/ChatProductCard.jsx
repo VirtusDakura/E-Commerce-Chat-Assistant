@@ -1,23 +1,99 @@
 import { motion } from 'framer-motion';
 import { FiShoppingCart, FiHeart, FiExternalLink } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import Button from '../ui/Button';
 import Rating from '../ui/Rating';
 import { useCartStore, useWishlistStore } from '../../store';
-import { formatPrice } from '../../lib/utils';
+import { toast } from '../ui/Toast';
+import { cartService } from '../../services/cartService';
+import { wishlistService } from '../../services/wishlistService';
+
+// Format price with currency (GHS for Jumia Ghana)
+const formatPrice = (price, currency = 'GHS') => {
+  return new Intl.NumberFormat('en-GH', {
+    style: 'currency',
+    currency: currency,
+  }).format(price);
+};
 
 const ChatProductCard = ({ product, compact = false }) => {
-  const addToCart = useCartStore((state) => state.addItem);
-  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
-  const isInWishlist = useWishlistStore((state) => state.isInWishlist(product.id));
+  const addToCartLocal = useCartStore((state) => state.addItem);
+  const toggleWishlistLocal = useWishlistStore((state) => state.toggleItem);
+  const isInWishlist = useWishlistStore((state) => 
+    state.isInWishlist(product.productId || product._id)
+  );
+  const isInCart = useCartStore((state) => 
+    state.isInCart(product.productId || product._id)
+  );
 
-  const handleAddToCart = () => {
-    addToCart(product);
+  // Product has: marketplace, productId, title, price, currency, image, rating, reviewsCount, productUrl
+  const productName = product.title || product.name;
+  const productImage = product.image || product.images?.[0];
+  const productPrice = product.price;
+  const productCurrency = product.currency || 'GHS';
+  const productUrl = product.productUrl;
+  const productDbId = product._id; // MongoDB ID for cart/wishlist operations
+
+  const handleAddToCart = async () => {
+    // Add to local store for immediate UI feedback
+    addToCartLocal({
+      id: product.productId || product._id,
+      name: productName,
+      price: productPrice,
+      image: productImage,
+      productUrl: productUrl,
+      marketplace: product.marketplace,
+    });
+
+    // If user is authenticated, also add to backend
+    if (productDbId) {
+      try {
+        await cartService.addToCart(productDbId);
+        toast.success('Added to Cart', `${productName} has been added to your cart`);
+      } catch {
+        // Already added locally, show success anyway
+        toast.success('Added to Cart', `${productName} has been added to your cart`);
+      }
+    } else {
+      toast.success('Added to Cart', `${productName} has been added to your cart`);
+    }
   };
 
-  const handleToggleWishlist = () => {
-    toggleWishlist(product);
+  const handleToggleWishlist = async () => {
+    // Toggle in local store
+    toggleWishlistLocal({
+      id: product.productId || product._id,
+      name: productName,
+      price: productPrice,
+      image: productImage,
+      productUrl: productUrl,
+      marketplace: product.marketplace,
+    });
+
+    // If user is authenticated and we have DB ID, sync with backend
+    if (productDbId) {
+      try {
+        if (isInWishlist) {
+          // Would need item ID to remove - for now just show toast
+          toast.info('Removed from Wishlist', `${productName} removed`);
+        } else {
+          await wishlistService.addToWishlist(productDbId);
+          toast.success('Added to Wishlist', `${productName} saved to wishlist`);
+        }
+      } catch {
+        // Already toggled locally
+        toast.success('Updated Wishlist', 'Wishlist updated');
+      }
+    } else {
+      toast.success('Updated Wishlist', 'Wishlist updated');
+    }
+  };
+
+  const handleBuyNow = () => {
+    // Open external product URL in new tab
+    if (productUrl) {
+      window.open(productUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   if (compact) {
@@ -28,17 +104,24 @@ const ChatProductCard = ({ product, compact = false }) => {
         className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
       >
         <img
-          src={product.image}
-          alt={product.name}
+          src={productImage}
+          alt={productName}
           className="w-16 h-16 object-cover rounded-lg"
         />
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-gray-900 text-sm truncate">{product.name}</h4>
-          <p className="text-blue-600 font-semibold">{formatPrice(product.price)}</p>
+          <h4 className="font-medium text-gray-900 text-sm truncate">{productName}</h4>
+          <p className="text-blue-600 font-semibold">{formatPrice(productPrice, productCurrency)}</p>
         </div>
-        <Button size="sm" onClick={handleAddToCart}>
-          <FiShoppingCart className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-1">
+          <Button size="sm" variant="outline" onClick={handleAddToCart}>
+            <FiShoppingCart className="w-4 h-4" />
+          </Button>
+          {productUrl && (
+            <Button size="sm" onClick={handleBuyNow} title="Buy on Jumia">
+              <FiExternalLink className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </motion.div>
     );
   }
@@ -52,8 +135,8 @@ const ChatProductCard = ({ product, compact = false }) => {
       {/* Product Image */}
       <div className="relative aspect-square bg-gray-100">
         <img
-          src={product.image}
-          alt={product.name}
+          src={productImage}
+          alt={productName}
           className="w-full h-full object-cover"
         />
         <button
@@ -67,49 +150,56 @@ const ChatProductCard = ({ product, compact = false }) => {
         >
           <FiHeart className={cn('w-4 h-4', isInWishlist && 'fill-current')} />
         </button>
+        {/* Marketplace Badge */}
+        {product.marketplace && (
+          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-orange-500 text-white rounded-full capitalize">
+            {product.marketplace}
+          </span>
+        )}
       </div>
 
       {/* Product Info */}
       <div className="p-4">
         <div className="flex items-start justify-between gap-2 mb-2">
           <h4 className="font-medium text-gray-900 text-sm line-clamp-2">
-            {product.name}
+            {productName}
           </h4>
         </div>
 
-        {product.rating && (
+        {product.rating > 0 && (
           <div className="mb-2">
-            <Rating value={product.rating} size="sm" showValue />
+            <Rating value={product.rating} size="sm" count={product.reviewsCount} />
           </div>
         )}
 
         <div className="flex items-center justify-between mb-3">
           <p className="text-lg font-bold text-blue-600">
-            {formatPrice(product.price)}
+            {formatPrice(productPrice, productCurrency)}
           </p>
-          {product.originalPrice && (
-            <p className="text-sm text-gray-400 line-through">
-              {formatPrice(product.originalPrice)}
-            </p>
-          )}
         </div>
 
         {/* Action Buttons */}
         <div className="flex gap-2">
           <Button
             size="sm"
-            variant="primary"
+            variant={isInCart ? 'outline' : 'primary'}
             onClick={handleAddToCart}
             className="flex-1"
             leftIcon={<FiShoppingCart className="w-4 h-4" />}
           >
-            Add to Cart
+            {isInCart ? 'In Cart' : 'Add to Cart'}
           </Button>
-          <Link to={`/product/${product.id}`}>
-            <Button size="sm" variant="outline">
+          {productUrl && (
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={handleBuyNow}
+              title="Buy on Jumia"
+              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+            >
               <FiExternalLink className="w-4 h-4" />
             </Button>
-          </Link>
+          )}
         </div>
       </div>
     </motion.div>

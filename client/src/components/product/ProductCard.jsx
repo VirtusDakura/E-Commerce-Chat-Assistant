@@ -78,7 +78,7 @@ const ProductCard = ({ product, index = 0 }) => {
           </div>
 
           {/* Add to Cart Button */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/50 to-transparent translate-y-full group-hover:translate-y-0 transition-transform">
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black/50 to-transparent translate-y-full group-hover:translate-y-0 transition-transform">
             <button
               onClick={handleAddToCart}
               className={cn(

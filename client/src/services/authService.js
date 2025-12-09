@@ -35,7 +35,7 @@ export const authService = {
    * @returns {Promise} - User data
    */
   async getProfile() {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/users/profile');
     return response.data;
   },
 
@@ -45,7 +45,17 @@ export const authService = {
    * @returns {Promise} - Updated user data
    */
   async updateProfile(userData) {
-    const response = await api.put('/auth/profile', userData);
+    const response = await api.put('/users/profile', userData);
+    return response.data;
+  },
+
+  /**
+   * Change password
+   * @param {Object} passwords - { currentPassword, newPassword }
+   * @returns {Promise}
+   */
+  async changePassword(passwords) {
+    const response = await api.put('/users/change-password', passwords);
     return response.data;
   },
 
@@ -66,7 +76,7 @@ export const authService = {
    * @returns {Promise}
    */
   async resetPassword(token, password) {
-    const response = await api.post('/auth/reset-password', { token, password });
+    const response = await api.put(`/auth/reset-password/${token}`, { password });
     return response.data;
   },
 };
