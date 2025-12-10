@@ -88,6 +88,19 @@ const ChatPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Fetch chat history - defined before sendMessage since it's used there
+  const fetchChatHistory = useCallback(async () => {
+    setLoadingHistory(true);
+    try {
+      const history = await chatAPI.getHistory();
+      setChatHistory(history || []);
+    } catch (err) {
+      console.error('Failed to fetch chat history:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, []);
+
   const sendMessage = useCallback(async (content) => {
     if (!content.trim()) return;
     
@@ -156,19 +169,6 @@ const ChatPage = () => {
     }
   };
 
-  // Fetch chat history
-  const fetchChatHistory = useCallback(async () => {
-    setLoadingHistory(true);
-    try {
-      const history = await chatAPI.getHistory();
-      setChatHistory(history || []);
-    } catch (err) {
-      console.error('Failed to fetch chat history:', err);
-    } finally {
-      setLoadingHistory(false);
-    }
-  }, []);
-
   // Load chat history on mount
   useEffect(() => {
     fetchChatHistory();
@@ -232,7 +232,7 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] flex bg-white">
+    <div className="h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] flex bg-white overflow-hidden">
       {/* Sidebar */}
       <div 
         className={`
@@ -241,7 +241,7 @@ const ChatPage = () => {
           fixed md:relative inset-y-0 left-0 z-40
           ${sidebarOpen ? 'md:w-72' : 'md:w-0'}
         `}
-        style={{ top: 'inherit' }}
+        style={{ top: 'inherit', height: '100%' }}
       >
         {/* Sidebar Content */}
         <div className="flex flex-col h-full w-72">
@@ -310,7 +310,7 @@ const ChatPage = () => {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white relative">
+      <div className="flex-1 flex flex-col min-w-0 bg-white relative overflow-hidden">
         {/* Toggle Sidebar Button */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -325,9 +325,9 @@ const ChatPage = () => {
 
         {/* Empty State */}
         {messages.length === 0 && !isTyping ? (
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col overflow-hidden">
             {/* Center Content */}
-            <div className="flex-1 flex flex-col items-center justify-center px-4">
+            <div className="flex-1 flex flex-col items-center justify-center px-4 overflow-y-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -374,8 +374,8 @@ const ChatPage = () => {
               </motion.div>
             </div>
 
-            {/* Input Area */}
-            <div className="p-4">
+            {/* Input Area - Fixed at bottom */}
+            <div className="shrink-0 p-4 bg-white border-t border-gray-100">
               <div className="max-w-3xl mx-auto">
                 <form onSubmit={handleSubmit}>
                   <div className="flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
@@ -405,8 +405,8 @@ const ChatPage = () => {
           </div>
         ) : (
           /* Chat View */
-          <div className="flex-1 flex flex-col">
-            {/* Messages Area */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Messages Area - Only this scrolls */}
             <div className="flex-1 overflow-y-auto">
               <div className="max-w-3xl mx-auto px-4 py-6">
                 <AnimatePresence mode="popLayout">
@@ -452,8 +452,8 @@ const ChatPage = () => {
               </div>
             </div>
 
-            {/* Input Area */}
-            <div className="border-t border-gray-100 bg-white p-4">
+            {/* Input Area - Fixed at bottom, never scrolls */}
+            <div className="shrink-0 border-t border-gray-100 bg-white p-4">
               <div className="max-w-3xl mx-auto">
                 <form onSubmit={handleSubmit}>
                   <div className="flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
