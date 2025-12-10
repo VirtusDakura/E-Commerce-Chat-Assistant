@@ -204,7 +204,7 @@ const ChatPage = () => {
       if (window.innerWidth < 768) {
         setSidebarOpen(false);
       }
-    } catch (err) {
+    } catch {
       toast.error('Error', 'Failed to load conversation');
     }
   };
@@ -219,7 +219,7 @@ const ChatPage = () => {
         handleNewChat();
       }
       toast.success('Deleted', 'Conversation deleted');
-    } catch (err) {
+    } catch {
       toast.error('Error', 'Failed to delete conversation');
     }
   };

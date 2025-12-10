@@ -19,7 +19,7 @@ export const chatMessageSchema = z.object({
     sessionId: z
       .string()
       .max(100, 'Session ID cannot exceed 100 characters')
-      .optional(),
+      .nullish(), // Allow null, undefined, or string
   }),
 });
 

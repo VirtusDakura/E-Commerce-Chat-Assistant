@@ -25,10 +25,24 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    // Handle new error response format from backend
+    const errorData = error.response?.data;
+    
     if (error.response?.status === 401) {
-      localStorage.removeItem('auth-token');
-      window.location.href = '/login';
+      // Check for token invalidation message
+      const isTokenInvalid = errorData?.message?.includes('invalidated') || 
+                             errorData?.message?.includes('expired');
+      if (isTokenInvalid) {
+        localStorage.removeItem('auth-token');
+        window.location.href = '/login';
+      }
     }
+    
+    // Extract validation errors if present
+    if (errorData?.error?.validationErrors) {
+      error.validationErrors = errorData.error.validationErrors;
+    }
+    
     return Promise.reject(error);
   }
 );

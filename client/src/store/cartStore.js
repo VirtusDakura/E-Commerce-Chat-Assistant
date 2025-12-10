@@ -21,7 +21,9 @@ const useCartStore = create(
         set({ isLoading: true, error: null });
         try {
           const response = await cartAPI.getCart();
-          const backendItems = response.data.cart.items.map((item) => ({
+          // Backend returns: { success, data: { cart, platformGroups, totalEstimate, itemCount } }
+          const cart = response.data?.cart || response.data;
+          const backendItems = (cart?.items || []).map((item) => ({
             id: item._id,
             _id: item._id,
             productId: item.product?.productId || item.product?._id,
@@ -29,8 +31,8 @@ const useCartStore = create(
             price: item.price,
             currency: 'GHS',
             image: item.product?.images?.[0] || item.productImage,
-            productUrl: item.product?.externalUrl || item.externalUrl,
-            marketplace: item.platform || 'jumia',
+            productUrl: item.externalUrl || item.product?.productUrl,
+            marketplace: item.platform || item.product?.marketplace || 'jumia',
             quantity: item.quantity,
           }));
           set({ items: backendItems, isLoading: false });
