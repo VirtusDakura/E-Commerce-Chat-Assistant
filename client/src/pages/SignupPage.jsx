@@ -63,11 +63,11 @@ const SignupPage = () => {
           </div>
           <h2 className="text-3xl font-bold mb-4">Join ShopSmart Today</h2>
           <p className="text-blue-100">
-            Create an account to unlock personalized recommendations, 
-            save your favorites, and enjoy a seamless shopping experience.
+            Create an account to get personalized AI recommendations, 
+            save your favorites, and discover great deals on Jumia Ghana.
           </p>
           <div className="mt-8 space-y-3">
-            {['AI-Powered Recommendations', 'Save Wishlist Items', 'Faster Checkout', 'Exclusive Deals'].map((feature, index) => (
+            {['AI-Powered Recommendations', 'Save Wishlist Items', 'Shop Jumia Ghana', 'Chat with AI Assistant'].map((feature, index) => (
               <motion.div
                 key={feature}
                 initial={{ opacity: 0, x: -20 }}

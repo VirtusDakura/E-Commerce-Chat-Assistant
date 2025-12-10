@@ -4,55 +4,56 @@ const PrivacyPage = () => {
   const sections = [
     {
       title: 'Information We Collect',
-      content: `We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us for support. This may include:
+      content: `We collect information you provide directly to us, such as when you create an account or use our AI shopping assistant. This may include:
 
-• Personal information (name, email address, phone number)
-• Payment information (credit card details, billing address)
-• Shipping information (delivery address)
-• Communication preferences
+• Personal information (name, email address)
+• Account credentials
+• Chat history and conversation data with our AI assistant
+• Shopping preferences and interests
+• Products you search for, save, or add to your cart
 • Any other information you choose to provide`,
     },
     {
       title: 'How We Use Your Information',
       content: `We use the information we collect to:
 
-• Process transactions and send related information
-• Send you technical notices, updates, and support messages
-• Respond to your comments, questions, and customer service requests
-• Personalize your shopping experience with AI-powered recommendations
-• Monitor and analyze trends, usage, and activities
-• Detect, investigate, and prevent fraudulent transactions`,
+• Provide personalized AI-powered product recommendations
+• Process your shopping queries and requests
+• Save your cart and wishlist items
+• Send you technical notices and support messages
+• Respond to your comments, questions, and requests
+• Improve our AI models to better serve you
+• Monitor and analyze usage patterns to enhance our service`,
     },
     {
       title: 'AI and Data Processing',
-      content: `Our AI shopping assistant uses your browsing and purchase history to provide personalized recommendations. This processing includes:
+      content: `Our AI shopping assistant, powered by Google Gemini, processes your conversations to provide helpful product recommendations from Jumia Ghana. This processing includes:
 
-• Analyzing your preferences and shopping patterns
-• Generating product suggestions based on your interests
-• Improving our AI models to better serve you
-• You can opt out of AI-based personalization at any time through your account settings`,
+• Understanding your shopping queries and preferences
+• Searching for relevant products on Jumia Ghana
+• Generating personalized product suggestions
+• Improving our AI responses over time
+• Your chat conversations may be used to improve our AI service`,
     },
     {
-      title: 'Information Sharing',
-      content: `We may share your information with:
+      title: 'Third-Party Services',
+      content: `ShopSmart AI integrates with third-party services to provide our functionality:
 
-• Service providers who assist in our operations
-• Payment processors for transaction handling
-• Shipping partners for order delivery
+• Google Gemini AI for conversation processing
+• Jumia Ghana for product information and purchases
 • Analytics providers to improve our services
-• Law enforcement when required by law
 
-We never sell your personal information to third parties.`,
+When you click to purchase a product, you will be redirected to Jumia Ghana, which has its own privacy policy. We encourage you to review their policies.`,
     },
     {
       title: 'Data Security',
-      content: `We implement industry-standard security measures including:
+      content: `We implement security measures to protect your information:
 
-• Encryption of data in transit and at rest
-• Regular security audits and penetration testing
-• Access controls and authentication measures
-• Secure data centers with 24/7 monitoring
-• Employee training on data protection`,
+• Encryption of data in transit
+• Secure authentication using JWT tokens
+• Password hashing for account security
+• Regular security reviews
+• Access controls on sensitive data`,
     },
     {
       title: 'Your Rights',
@@ -60,24 +61,23 @@ We never sell your personal information to third parties.`,
 
 • Access your personal data
 • Correct inaccurate data
-• Delete your data
-• Export your data
+• Delete your account and data
+• Clear your chat history
 • Opt out of marketing communications
-• Restrict processing of your data
 
-To exercise these rights, contact us at privacy@shopsmart.com`,
+To exercise these rights, contact us at privacy@shopsmartai.com`,
     },
     {
-      title: 'Cookies and Tracking',
-      content: `We use cookies and similar technologies to:
+      title: 'Cookies and Local Storage',
+      content: `We use cookies and local storage to:
 
 • Keep you logged in
-• Remember your preferences
-• Understand how you use our site
-• Deliver personalized advertisements
+• Remember your cart and wishlist items
+• Save your preferences
+• Understand how you use our service
 • Improve our services
 
-You can manage cookie preferences through your browser settings.`,
+You can manage these through your browser settings.`,
     },
     {
       title: 'Changes to This Policy',
@@ -97,8 +97,8 @@ You can manage cookie preferences through your browser settings.`,
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Privacy Policy</h1>
             <p className="text-lg text-blue-100">
-              Your privacy is important to us. This policy explains how we collect, 
-              use, and protect your personal information.
+              Your privacy matters to us. This policy explains how ShopSmart AI 
+              collects, uses, and protects your personal information.
             </p>
             <p className="text-sm text-blue-200 mt-4">Last Updated: December 1, 2024</p>
           </motion.div>
@@ -116,10 +116,10 @@ You can manage cookie preferences through your browser settings.`,
             >
               <div className="prose prose-lg max-w-none">
                 <p className="text-gray-600 mb-8">
-                  At ShopSmart, we take your privacy seriously. This Privacy Policy 
+                  At ShopSmart AI, we take your privacy seriously. This Privacy Policy 
                   describes how we collect, use, and share information about you when 
-                  you use our website, mobile applications, and other online products 
-                  and services.
+                  you use our AI shopping assistant service that helps you find products 
+                  on Jumia Ghana.
                 </p>
 
                 {sections.map((section, index) => (
@@ -148,8 +148,7 @@ You can manage cookie preferences through your browser settings.`,
                     please contact us at:
                   </p>
                   <p className="text-blue-600">
-                    privacy@shopsmart.com<br />
-                    +1 (555) 123-4567
+                    privacy@shopsmartai.com
                   </p>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageCircle, FiClock } from 'react-icons/fi';
+import { FiMail, FiMapPin, FiSend, FiMessageCircle, FiClock } from 'react-icons/fi';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Card from '../components/ui/Card';
@@ -20,26 +20,26 @@ const contactInfo = [
   {
     icon: FiMail,
     title: 'Email',
-    value: 'support@shopsmart.com',
-    description: 'Send us an email anytime',
+    value: 'support@shopsmartai.com',
+    description: 'We respond within 24 hours',
   },
   {
-    icon: FiPhone,
-    title: 'Phone',
-    value: '+1 (555) 123-4567',
-    description: 'Mon-Fri from 8am to 6pm',
+    icon: FiMessageCircle,
+    title: 'AI Chat',
+    value: 'Always Available',
+    description: 'Chat with our AI assistant 24/7',
   },
   {
     icon: FiMapPin,
-    title: 'Office',
-    value: '123 Commerce Street',
-    description: 'Tech City, TC 12345',
+    title: 'Location',
+    value: 'Accra, Ghana',
+    description: 'Serving shoppers across Ghana',
   },
   {
     icon: FiClock,
-    title: 'Hours',
+    title: 'Support Hours',
     value: '24/7 AI Support',
-    description: 'Human support: 8am-6pm EST',
+    description: 'Human support: 9am-6pm GMT',
   },
 ];
 
@@ -79,8 +79,8 @@ const ContactPage = () => {
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Get in Touch</h1>
             <p className="text-lg text-blue-100">
-              Have a question or feedback? We'd love to hear from you. 
-              Our team is always here to help.
+              Have questions about ShopSmart AI? Need help with your shopping experience? 
+              We're here to help you find the best deals on Jumia Ghana.
             </p>
           </motion.div>
         </div>
@@ -232,9 +232,9 @@ const ContactPage = () => {
                 <div className="space-y-3">
                   {[
                     'How does the AI shopping assistant work?',
-                    'What is your return policy?',
-                    'How can I track my order?',
-                    'Do you ship internationally?',
+                    'Are the products from Jumia Ghana?',
+                    'Can I purchase directly through ShopSmart AI?',
+                    'How accurate are the product prices?',
                   ].map((question, index) => (
                     <button
                       key={index}
@@ -246,18 +246,17 @@ const ContactPage = () => {
                 </div>
               </Card>
 
-              {/* Map Placeholder */}
-              <div className="aspect-video bg-gray-200 rounded-2xl overflow-hidden">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.2175!2d-73.987844!3d40.757416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ1JzI2LjciTiA3M8KwNTknMTYuMiJX!5e0!3m2!1sen!2sus!4v1234567890"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Office Location"
-                />
+              {/* About ShopSmart AI */}
+              <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-2xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  About ShopSmart AI
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  ShopSmart AI is your intelligent shopping assistant for Jumia Ghana. 
+                  Powered by Google Gemini AI, we help you discover products, compare prices, 
+                  and find the best deals through natural conversation. When you're ready to 
+                  purchase, we'll direct you straight to Jumia Ghana to complete your order.
+                </p>
               </div>
             </motion.div>
           </div>
