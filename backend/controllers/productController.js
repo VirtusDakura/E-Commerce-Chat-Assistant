@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import { searchProducts as searchMarketplaceProducts, refreshProductData as refreshMarketplaceProduct } from '../services/scrapingService.js';
 
 // @desc    Get all products with filtering, sorting, pagination, and search
 // @route   GET /api/products
@@ -311,9 +312,8 @@ export const searchJumiaProducts = async (req, res) => {
       });
     }
 
-    const { searchJumia } = await import('../services/jumiaService.js');
-
-    const products = await searchJumia(query, {
+    const products = await searchMarketplaceProducts(query, {
+      marketplace: 'jumia',
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 24,
     });
@@ -383,8 +383,7 @@ export const refreshProductData = async (req, res) => {
       });
     }
 
-    const { refreshProduct } = await import('../services/jumiaService.js');
-    const product = await refreshProduct(marketplace.toLowerCase(), productId);
+    const product = await refreshMarketplaceProduct(marketplace.toLowerCase(), productId);
 
     res.status(200).json({
       success: true,

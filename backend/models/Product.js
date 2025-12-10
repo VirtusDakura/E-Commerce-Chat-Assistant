@@ -26,20 +26,12 @@ const productSchema = new mongoose.Schema(
       default: 'GHS',
       trim: true,
     },
+    // Category is now flexible (not enum-restricted)
     category: {
       type: String,
-      required: [true, 'Product category is required'],
-      enum: [
-        'Electronics',
-        'Clothing',
-        'Books',
-        'Home & Garden',
-        'Sports',
-        'Toys',
-        'Beauty',
-        'Food',
-        'Other',
-      ],
+      default: 'Other',
+      trim: true,
+      index: true,
     },
     // External marketplace information (Jumia, Amazon, etc.)
     marketplace: {
@@ -117,6 +109,21 @@ const productSchema = new mongoose.Schema(
     raw: {
       type: mongoose.Schema.Types.Mixed,
       select: false, // Don't include in queries by default
+    },
+    // Vector embedding for semantic search (future use)
+    embedding: {
+      type: [Number],
+      select: false, // Don't include in queries by default (large array)
+      index: false, // Will use vector index when implemented
+    },
+    // Embedding metadata
+    embeddingModel: {
+      type: String,
+      select: false,
+    },
+    embeddedAt: {
+      type: Date,
+      select: false,
     },
   },
   {
