@@ -49,7 +49,8 @@ export const authAPI = {
 export const chatAPI = {
   sendMessage: (message, sessionId = null) => api.post('/chat', { message, sessionId }),
   getConversations: (page = 1, limit = 10) => api.get('/chat/conversations', { params: { page, limit } }),
-  getConversation: (sessionId) => api.get(`/chat/conversations/${sessionId}`),
+  getHistory: (page = 1, limit = 20) => api.get('/chat/conversations', { params: { page, limit } }).then(res => res.data || []),
+  getConversation: (sessionId) => api.get(`/chat/conversations/${sessionId}`).then(res => res.data),
   deleteConversation: (sessionId) => api.delete(`/chat/conversations/${sessionId}`),
 };
 

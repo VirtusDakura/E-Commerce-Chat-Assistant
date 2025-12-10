@@ -75,6 +75,7 @@ export async function chat(req, res, next) {
 
     let products = [];
     let productIds = [];
+    let productsWithDbIds = [];
 
     // If AI wants to search products
     if (aiResponse.action === 'search_products' && aiResponse.query) {
@@ -95,10 +96,14 @@ export async function chat(req, res, next) {
             marketplace: p.marketplace,
             productId: p.productId,
           });
-          return dbProduct?._id;
+          return {
+            ...p,
+            _id: dbProduct?._id || null,
+          };
         });
 
-        productIds = (await Promise.all(productPromises)).filter(Boolean);
+        productsWithDbIds = await Promise.all(productPromises);
+        productIds = productsWithDbIds.map(p => p._id).filter(Boolean);
       } catch (searchError) {
         console.error('[Chat] Jumia search error:', searchError.message);
         aiResponse.reply = `I had trouble searching Jumia right now. ${searchError.message}. Could you try rephrasing your search?`;
@@ -126,8 +131,9 @@ export async function chat(req, res, next) {
 
     await conversation.save();
 
-    // Format response
-    const recommendations = products.map((product) => ({
+    // Format response - include _id for cart/wishlist operations
+    const recommendations = productsWithDbIds.map((product) => ({
+      _id: product._id,
       marketplace: product.marketplace,
       productId: product.productId,
       title: product.title,

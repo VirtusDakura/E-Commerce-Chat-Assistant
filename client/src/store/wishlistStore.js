@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { wishlistAPI } from '../services/api';
 
+// Helper to check if user is authenticated
+const isAuthenticated = () => !!localStorage.getItem('auth-token');
+
 const useWishlistStore = create(
   persist(
     (set, get) => ({
@@ -65,26 +68,49 @@ const useWishlistStore = create(
         }
       },
 
-      removeItem: (productId) => {
+      removeItem: async (productId) => {
         const { items, getProductId } = get();
+        const item = items.find((i) => getProductId(i) === productId);
+        
+        // Update local state immediately
         set({
           items: items.filter((item) => getProductId(item) !== productId),
         });
+
+        // Sync with backend if authenticated
+        if (isAuthenticated() && item?._id) {
+          try {
+            await wishlistAPI.removeFromWishlist(item._id);
+          } catch (error) {
+            console.error('Failed to remove from wishlist on backend:', error);
+          }
+        }
       },
 
-      toggleItem: (product) => {
+      toggleItem: async (product) => {
         const { items, addItem, removeItem, getProductId } = get();
         const productId = getProductId(product);
         const exists = items.some((item) => getProductId(item) === productId);
 
         if (exists) {
-          removeItem(productId);
+          await removeItem(productId);
         } else {
           addItem(product);
         }
       },
 
-      clearWishlist: () => set({ items: [], error: null }),
+      clearWishlist: async () => {
+        set({ items: [], error: null });
+
+        // Sync with backend if authenticated
+        if (isAuthenticated()) {
+          try {
+            await wishlistAPI.clearWishlist();
+          } catch (error) {
+            console.error('Failed to clear wishlist on backend:', error);
+          }
+        }
+      },
 
       setLoading: (isLoading) => set({ isLoading }),
 

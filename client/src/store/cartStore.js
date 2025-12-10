@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { cartAPI } from '../services/api';
 
+// Helper to check if user is authenticated
+const isAuthenticated = () => !!localStorage.getItem('auth-token');
+
 const useCartStore = create(
   persist(
     (set, get) => ({
@@ -70,57 +73,111 @@ const useCartStore = create(
         }
       },
 
-      removeItem: (productId) => {
+      removeItem: async (productId) => {
         const { items, getProductId } = get();
+        const item = items.find((i) => getProductId(i) === productId);
+        
+        // Update local state immediately
         set({
           items: items.filter((item) => getProductId(item) !== productId),
         });
-      },
 
-      updateQuantity: (productId, quantity) => {
-        const { items, getProductId } = get();
-        if (quantity <= 0) {
-          set({
-            items: items.filter((item) => getProductId(item) !== productId),
-          });
-        } else {
-          set({
-            items: items.map((item) =>
-              getProductId(item) === productId ? { ...item, quantity } : item
-            ),
-          });
+        // Sync with backend if authenticated
+        if (isAuthenticated() && item?._id) {
+          try {
+            await cartAPI.removeFromCart(item._id);
+          } catch (error) {
+            console.error('Failed to remove from cart on backend:', error);
+          }
         }
       },
 
-      incrementQuantity: (productId) => {
-        const { items, getProductId } = get();
-        set({
-          items: items.map((item) =>
-            getProductId(item) === productId
-              ? { ...item, quantity: item.quantity + 1 }
-              : item
-          ),
-        });
+      updateQuantity: async (productId, quantity) => {
+        const { items, getProductId, removeItem } = get();
+        const item = items.find((i) => getProductId(i) === productId);
+        
+        if (quantity <= 0) {
+          await removeItem(productId);
+        } else {
+          set({
+            items: items.map((i) =>
+              getProductId(i) === productId ? { ...i, quantity } : i
+            ),
+          });
+
+          // Sync with backend if authenticated
+          if (isAuthenticated() && item?._id) {
+            try {
+              await cartAPI.updateQuantity(item._id, quantity);
+            } catch (error) {
+              console.error('Failed to update quantity on backend:', error);
+            }
+          }
+        }
       },
 
-      decrementQuantity: (productId) => {
+      incrementQuantity: async (productId) => {
+        const { items, getProductId } = get();
+        const item = items.find((i) => getProductId(i) === productId);
+        const newQuantity = item ? item.quantity + 1 : 1;
+        
+        set({
+          items: items.map((i) =>
+            getProductId(i) === productId
+              ? { ...i, quantity: newQuantity }
+              : i
+          ),
+        });
+
+        // Sync with backend if authenticated
+        if (isAuthenticated() && item?._id) {
+          try {
+            await cartAPI.updateQuantity(item._id, newQuantity);
+          } catch (error) {
+            console.error('Failed to update quantity on backend:', error);
+          }
+        }
+      },
+
+      decrementQuantity: async (productId) => {
         const { items, removeItem, getProductId } = get();
         const item = items.find((i) => getProductId(i) === productId);
         
         if (item && item.quantity <= 1) {
-          removeItem(productId);
+          await removeItem(productId);
         } else {
+          const newQuantity = item.quantity - 1;
           set({
             items: items.map((i) =>
               getProductId(i) === productId
-                ? { ...i, quantity: i.quantity - 1 }
+                ? { ...i, quantity: newQuantity }
                 : i
             ),
           });
+
+          // Sync with backend if authenticated
+          if (isAuthenticated() && item?._id) {
+            try {
+              await cartAPI.updateQuantity(item._id, newQuantity);
+            } catch (error) {
+              console.error('Failed to update quantity on backend:', error);
+            }
+          }
         }
       },
 
-      clearCart: () => set({ items: [], error: null }),
+      clearCart: async () => {
+        set({ items: [], error: null });
+
+        // Sync with backend if authenticated
+        if (isAuthenticated()) {
+          try {
+            await cartAPI.clearCart();
+          } catch (error) {
+            console.error('Failed to clear cart on backend:', error);
+          }
+        }
+      },
 
       setLoading: (isLoading) => set({ isLoading }),
 
