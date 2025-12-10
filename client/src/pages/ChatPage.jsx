@@ -115,7 +115,7 @@ const ChatPage = () => {
       });
       toast.error('Error', errorMessage);
     }
-  }, [addUserMessage, setTyping, currentSessionId, setSessionId, addAIMessage]);
+  }, [addUserMessage, setTyping, currentSessionId, setSessionId, addAIMessage, fetchChatHistory]);
 
   // Handle initial prompt from URL
   useEffect(() => {
