@@ -21,20 +21,22 @@ const useWishlistStore = create(
         set({ isLoading: true, error: null });
         try {
           const response = await wishlistAPI.getWishlist();
-          const backendItems = response.data.items.map((item) => ({
+          // Backend returns: { success, data: { _id, user, items, ... } }
+          const wishlistData = response.data || response;
+          const backendItems = (wishlistData?.items || []).map((item) => ({
             id: item._id,
             _id: item._id,
             productId: item.product?.productId || item.product?._id,
             name: item.product?.name,
-            price: item.currentPrice || item.product?.price,
+            price: item.product?.price,
             savedPrice: item.savedPrice,
             currency: 'GHS',
             image: item.product?.images?.[0],
-            productUrl: item.product?.externalUrl,
-            marketplace: item.product?.platform || 'jumia',
+            productUrl: item.product?.productUrl,
+            marketplace: item.product?.marketplace || 'jumia',
             addedAt: item.addedAt,
             priceChanged: item.priceChanged,
-            priceDropped: item.priceDropped,
+            priceDropped: item.savedPrice > item.product?.price,
           }));
           set({ items: backendItems, isLoading: false });
         } catch (error) {
