@@ -39,9 +39,10 @@ const GuestRoute = ({ children }) => {
 
 // Routes configuration
 const router = createBrowserRouter([
+  // Routes WITH footer (informational pages)
   {
     path: '/',
-    element: <Layout />,
+    element: <Layout showFooter={true} />,
     children: [
       {
         index: true,
@@ -63,6 +64,13 @@ const router = createBrowserRouter([
         path: 'terms',
         element: <TermsPage />,
       },
+    ],
+  },
+  // Routes WITHOUT footer (app/functional pages)
+  {
+    path: '/',
+    element: <Layout showFooter={false} />,
+    children: [
       {
         path: 'cart',
         element: <CartPage />,
