@@ -4,9 +4,9 @@ const TermsPage = () => {
   const sections = [
     {
       title: 'Acceptance of Terms',
-      content: `By accessing and using ShopSmart's website, mobile applications, and services, you accept and agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use our services.
+      content: `By accessing and using ShopSmart AI's website and services, you accept and agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use our services.
 
-These terms apply to all visitors, users, and others who access or use our services.`,
+These terms apply to all visitors, users, and others who access or use our AI shopping assistant service.`,
     },
     {
       title: 'Account Registration',
@@ -22,71 +22,63 @@ We reserve the right to suspend or terminate accounts that violate these terms.`
     },
     {
       title: 'AI Shopping Assistant',
-      content: `Our AI shopping assistant provides personalized product recommendations based on your interactions and preferences. By using the AI assistant, you understand that:
+      content: `Our AI shopping assistant, powered by Google Gemini, provides product recommendations from Jumia Ghana based on your conversations. By using the AI assistant, you understand that:
 
 • Recommendations are generated algorithmically and may not always be perfect
-• The AI may ask questions to better understand your needs
-• Your conversations may be used to improve our services
-• You should verify product details before making purchases
-• The AI assistant is not a substitute for professional advice`,
+• Product information is sourced from Jumia Ghana and may change
+• Prices shown are in Ghana Cedis (GHS) and are subject to change
+• You should verify product details on Jumia Ghana before purchasing
+• The AI assistant provides shopping help, not professional advice`,
     },
     {
       title: 'Products and Purchases',
-      content: `When making purchases through ShopSmart:
+      content: `ShopSmart AI is a shopping assistant that helps you discover products on Jumia Ghana. Important notes:
 
-• All prices are displayed in USD unless otherwise noted
-• Prices and availability are subject to change without notice
-• We reserve the right to limit quantities
-• Payment must be received before order processing
-• You are responsible for any applicable taxes
-• Product images are for illustration purposes only
+• All purchases are made directly on Jumia Ghana's platform
+• All prices are displayed in GHS (Ghana Cedis)
+• Prices and availability are controlled by Jumia Ghana and subject to change
+• ShopSmart AI does not process payments or handle transactions
+• Product images and descriptions are sourced from Jumia Ghana
+• For purchase-related issues, please contact Jumia Ghana directly
 
-We make every effort to display accurate product information, but we do not warrant that descriptions or other content is accurate, complete, or error-free.`,
+We strive to provide accurate product information but cannot guarantee that all details are current or error-free.`,
     },
     {
-      title: 'Shipping and Delivery',
-      content: `Shipping terms:
+      title: 'Third-Party Services',
+      content: `ShopSmart AI integrates with third-party services:
 
-• Delivery times are estimates and not guaranteed
-• Risk of loss passes to you upon delivery to the carrier
-• We are not responsible for delays caused by carriers
-• International orders may be subject to customs fees
-• Some items may have shipping restrictions
+• Jumia Ghana: Product information, pricing, and purchases
+• Google Gemini AI: Conversation processing and recommendations
 
-Please review our Shipping Policy for detailed information.`,
+When you click to purchase a product, you will be redirected to Jumia Ghana. Your interactions with Jumia Ghana are governed by their terms of service and privacy policy. We encourage you to review their policies.`,
     },
     {
-      title: 'Returns and Refunds',
-      content: `Our return policy:
+      title: 'Cart and Wishlist Features',
+      content: `ShopSmart AI allows you to save products to your cart and wishlist:
 
-• Most items can be returned within 30 days of delivery
-• Items must be in original condition with tags attached
-• Some items (personalized, perishable) may not be returnable
-• Refunds are processed within 5-10 business days
-• Original shipping costs are non-refundable unless we made an error
-
-See our Returns Policy for complete details.`,
+• These features are for convenience and do not represent actual purchases
+• Saved items may become unavailable or change price on Jumia Ghana
+• Your cart and wishlist data is stored in your account
+• We are not responsible for product availability when you decide to purchase`,
     },
     {
       title: 'Intellectual Property',
-      content: `All content on ShopSmart, including but not limited to:
+      content: `All content on ShopSmart AI, including but not limited to:
 
 • Website design and layout
 • Logos, trademarks, and brand elements
-• Product descriptions and images
 • AI algorithms and technology
 • Software and code
 
-is the property of ShopSmart or its licensors and is protected by intellectual property laws. You may not copy, modify, distribute, or create derivative works without our express written permission.`,
+is the property of ShopSmart AI or its licensors and is protected by intellectual property laws. Product information and images are the property of Jumia Ghana and their respective owners.`,
     },
     {
       title: 'User Conduct',
       content: `You agree not to:
 
 • Use our services for any illegal purpose
-• Harass, abuse, or harm other users
 • Attempt to gain unauthorized access to our systems
-• Use automated systems to access our services without permission
+• Use automated systems to scrape or abuse our services
 • Interfere with the proper working of our services
 • Upload malicious code or content
 • Impersonate others or provide false information
@@ -96,25 +88,19 @@ is the property of ShopSmart or its licensors and is protected by intellectual p
       title: 'Limitation of Liability',
       content: `To the maximum extent permitted by law:
 
-• ShopSmart is provided "as is" without warranties of any kind
+• ShopSmart AI is provided "as is" without warranties of any kind
 • We are not liable for indirect, incidental, or consequential damages
-• Our total liability is limited to the amount you paid for the service
 • We do not guarantee uninterrupted or error-free service
-• We are not responsible for third-party content or links
+• We are not responsible for purchases made on Jumia Ghana
+• We are not responsible for third-party content or services
 
-Some jurisdictions do not allow these limitations, so they may not apply to you.`,
+ShopSmart AI is a free service that helps you discover products. All purchasing decisions and transactions are between you and Jumia Ghana.`,
     },
     {
       title: 'Modifications to Terms',
       content: `We may modify these terms at any time by posting the revised terms on our website. Your continued use of our services after changes are posted constitutes your acceptance of the modified terms.
 
-We will notify you of material changes via email or through our services. Please review these terms periodically.`,
-    },
-    {
-      title: 'Governing Law',
-      content: `These terms are governed by the laws of the State of Delaware, United States, without regard to its conflict of law provisions. Any disputes arising from these terms will be resolved in the courts of Delaware.
-
-You agree to submit to the personal jurisdiction of these courts.`,
+Please review these terms periodically for any updates.`,
     },
   ];
 
@@ -130,7 +116,7 @@ You agree to submit to the personal jurisdiction of these courts.`,
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms of Service</h1>
             <p className="text-lg text-blue-100">
-              Please read these terms carefully before using our services.
+              Please read these terms carefully before using ShopSmart AI.
             </p>
             <p className="text-sm text-blue-200 mt-4">Last Updated: December 1, 2024</p>
           </motion.div>
@@ -148,10 +134,9 @@ You agree to submit to the personal jurisdiction of these courts.`,
             >
               <div className="prose prose-lg max-w-none">
                 <p className="text-gray-600 mb-8">
-                  Welcome to ShopSmart. These Terms of Service ("Terms") govern your use 
-                  of our website, mobile applications, AI shopping assistant, and related 
-                  services (collectively, the "Services"). By using our Services, you agree 
-                  to these Terms.
+                  Welcome to ShopSmart AI. These Terms of Service ("Terms") govern your use 
+                  of our AI shopping assistant service that helps you discover products on 
+                  Jumia Ghana. By using our Services, you agree to these Terms.
                 </p>
 
                 {sections.map((section, index) => (
@@ -179,8 +164,7 @@ You agree to submit to the personal jurisdiction of these courts.`,
                     If you have any questions about these Terms of Service, please contact us:
                   </p>
                   <p className="text-blue-600">
-                    legal@shopsmart.com<br />
-                    +1 (555) 123-4567
+                    support@shopsmartai.com
                   </p>
                 </div>
               </div>
