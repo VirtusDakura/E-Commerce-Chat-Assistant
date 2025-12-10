@@ -7,6 +7,8 @@ import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { generalLimiter } from './middleware/rateLimiter.js';
 
 const app = express();
 
@@ -14,6 +16,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply general rate limiting to all routes
+app.use(generalLimiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -35,20 +40,9 @@ app.get('/', (req, res) => {
 });
 
 // 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Route ${req.originalUrl} not found`,
-  });
-});
+app.use('*', notFoundHandler);
 
 // Global error handler
-app.use((err, req, res, _next) => {
-  console.error('Error:', err.message);
-  res.status(err.statusCode || 500).json({
-    success: false,
-    message: err.message || 'Internal Server Error',
-  });
-});
+app.use(errorHandler);
 
 export default app;

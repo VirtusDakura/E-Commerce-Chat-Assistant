@@ -108,12 +108,13 @@ export const addToCart = async (req, res) => {
       cart.items[existingItemIndex].price = product.price;
     } else {
       // Add new item to cart with external link info
+      // Map product fields to cart schema (marketplace -> platform, productUrl -> externalUrl)
       cart.items.push({
         product: productId,
         quantity: quantityToAdd,
         price: product.price,
-        platform: product.platform,
-        externalUrl: product.externalUrl,
+        platform: product.platform || product.marketplace || 'unknown',
+        externalUrl: product.externalUrl || product.productUrl || '',
       });
     }
 

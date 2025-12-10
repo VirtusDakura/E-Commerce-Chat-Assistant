@@ -8,6 +8,13 @@ import {
   clearWishlist,
 } from '../controllers/wishlistController.js';
 import { protect } from '../middleware/auth.js';
+import { validate } from '../validators/validate.js';
+import {
+  addToWishlistSchema,
+  updateWishlistItemSchema,
+  removeWishlistItemSchema,
+  moveToCartSchema,
+} from '../validators/wishlistValidator.js';
 
 const router = express.Router();
 
@@ -15,10 +22,10 @@ const router = express.Router();
 router.use(protect);
 
 router.get('/', getWishlist);
-router.post('/', addToWishlist);
-router.put('/:itemId', updateWishlistItem);
-router.delete('/:itemId', removeFromWishlist);
+router.post('/', validate(addToWishlistSchema), addToWishlist);
+router.put('/:itemId', validate(updateWishlistItemSchema), updateWishlistItem);
+router.delete('/:itemId', validate(removeWishlistItemSchema), removeFromWishlist);
 router.delete('/', clearWishlist);
-router.post('/move-to-cart', moveToCart);
+router.post('/move-to-cart', validate(moveToCartSchema), moveToCart);
 
 export default router;
