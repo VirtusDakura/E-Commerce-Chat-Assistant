@@ -89,21 +89,23 @@ const ContactPage = () => {
       {/* Contact Info Cards */}
       <section className="py-16 -mt-10">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Horizontal scroll on mobile, grid on sm+ */}
+          <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
             {contactInfo.map((info, index) => (
               <motion.div
                 key={info.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
+                className="shrink-0 w-[200px] sm:w-auto snap-start"
               >
-                <Card variant="elevated" className="p-6 text-center h-full">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <info.icon className="w-6 h-6 text-blue-600" />
+                <Card variant="elevated" className="p-5 sm:p-6 text-center h-full">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <info.icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{info.title}</h3>
-                  <p className="text-blue-600 font-medium mb-1">{info.value}</p>
-                  <p className="text-sm text-gray-500">{info.description}</p>
+                  <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">{info.title}</h3>
+                  <p className="text-blue-600 font-medium mb-1 text-sm">{info.value}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">{info.description}</p>
                 </Card>
               </motion.div>
             ))}
