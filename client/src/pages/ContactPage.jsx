@@ -77,9 +77,9 @@ const ContactPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Get in Touch</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">Get in Touch</h1>
             <p className="text-lg text-blue-100">
-              Have questions about ShopSmart AI? Need help with your shopping experience? 
+              Have questions about ShopSmart AI? Need help with your shopping experience?
               We're here to help you find the best deals on Jumia Ghana.
             </p>
           </motion.div>
@@ -89,7 +89,7 @@ const ContactPage = () => {
       {/* Contact Info Cards */}
       <section className="py-16 -mt-10">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {contactInfo.map((info, index) => (
               <motion.div
                 key={info.title}
@@ -114,7 +114,7 @@ const ContactPage = () => {
       {/* Contact Form Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Form */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -175,9 +175,8 @@ const ContactPage = () => {
                   <textarea
                     rows={5}
                     placeholder="Tell us more about your inquiry..."
-                    className={`block w-full rounded-lg border px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                      errors.message ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className={`block w-full rounded-lg border px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.message ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     {...register('message', {
                       required: 'Message is required',
                       minLength: { value: 20, message: 'Message must be at least 20 characters' },
@@ -252,9 +251,9 @@ const ContactPage = () => {
                   About ShopSmart AI
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  ShopSmart AI is your intelligent shopping assistant for Jumia Ghana. 
-                  Powered by Google Gemini AI, we help you discover products, compare prices, 
-                  and find the best deals through natural conversation. When you're ready to 
+                  ShopSmart AI is your intelligent shopping assistant for Jumia Ghana.
+                  Powered by Google Gemini AI, we help you discover products, compare prices,
+                  and find the best deals through natural conversation. When you're ready to
                   purchase, we'll direct you straight to Jumia Ghana to complete your order.
                 </p>
               </div>

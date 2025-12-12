@@ -83,11 +83,11 @@ const WishlistPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
-            <p className="text-gray-600">{items.length} items saved for later</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">My Wishlist</h1>
+            <p className="text-gray-600 text-sm sm:text-base">{items.length} items saved for later</p>
           </div>
           <Button
             variant="ghost"
@@ -99,7 +99,7 @@ const WishlistPage = () => {
         </motion.div>
 
         {/* Wishlist Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {items.map((item, index) => (
             <motion.div
               key={item.id}
@@ -147,11 +147,10 @@ const WishlistPage = () => {
                     </span>
                     {/* Price change indicator */}
                     {item.savedPrice && item.price !== item.savedPrice && (
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        item.price < item.savedPrice 
-                          ? 'bg-green-100 text-green-700' 
+                      <span className={`text-xs px-2 py-0.5 rounded ${item.price < item.savedPrice
+                          ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-700'
-                      }`}>
+                        }`}>
                         {item.price < item.savedPrice ? '↓ Price dropped!' : '↑ Price increased'}
                       </span>
                     )}

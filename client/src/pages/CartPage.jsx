@@ -91,11 +91,11 @@ const CartPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
-          <p className="text-gray-600">{getItemCount()} items from external marketplaces</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+          <p className="text-gray-600 text-sm sm:text-base">{getItemCount()} items from external marketplaces</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items Grouped by Platform */}
           <div className="lg:col-span-2 space-y-6">
             {Object.entries(itemsByPlatform).map(([platform, platformItems]) => (
@@ -119,25 +119,25 @@ const CartPage = () => {
                   {/* Platform Items */}
                   <div className="divide-y divide-gray-100">
                     {platformItems.map((item) => (
-                      <div key={item.id} className="p-4 flex gap-4">
+                      <div key={item.id} className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
                         {/* Product Image */}
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-full sm:w-20 h-32 sm:h-20 object-cover rounded-lg"
                         />
 
                         {/* Product Details */}
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-900 line-clamp-2">
+                          <h4 className="font-medium text-gray-900 line-clamp-2 text-sm sm:text-base">
                             {item.name}
                           </h4>
-                          <p className="text-lg font-bold text-blue-600 mt-1">
+                          <p className="text-base sm:text-lg font-bold text-blue-600 mt-1">
                             {formatPrice(item.price, item.currency)}
                           </p>
-                          
+
                           {/* Quantity Controls */}
-                          <div className="flex items-center gap-2 mt-2">
+                          <div className="flex items-center gap-1 sm:gap-2 mt-2">
                             <button
                               onClick={() => decrementQuantity(item.id)}
                               className="p-1 rounded border border-gray-200 hover:bg-gray-100"
@@ -188,7 +188,7 @@ const CartPage = () => {
             ))}
 
             {/* Actions */}
-            <div className="flex justify-between items-center pt-4">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4">
               <Link to="/chat">
                 <Button variant="ghost" leftIcon={<FiMessageCircle className="w-4 h-4" />}>
                   Continue Shopping
@@ -210,7 +210,7 @@ const CartPage = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <Card variant="elevated" className="p-6 sticky top-24">
+              <Card variant="elevated" className="p-4 sm:p-6 sticky top-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Cart Summary</h2>
 
                 {/* Info Notice */}

@@ -49,7 +49,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col-reverse lg:flex-row">
       {/* Left Side - Image/Branding */}
       <div className="hidden lg:flex flex-1 bg-linear-to-br from-blue-600 to-blue-800 items-center justify-center p-8">
         <motion.div
@@ -63,7 +63,7 @@ const SignupPage = () => {
           </div>
           <h2 className="text-3xl font-bold mb-4">Join ShopSmart Today</h2>
           <p className="text-blue-100">
-            Create an account to get personalized AI recommendations, 
+            Create an account to get personalized AI recommendations,
             save your favorites, and discover great deals on Jumia Ghana.
           </p>
           <div className="mt-8 space-y-3">
@@ -84,7 +84,7 @@ const SignupPage = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-[60vh] lg:min-h-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ const SignupPage = () => {
             </span>
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create an account</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create an account</h1>
           <p className="text-gray-600 mb-8">
             Sign up to start your AI-powered shopping journey
           </p>

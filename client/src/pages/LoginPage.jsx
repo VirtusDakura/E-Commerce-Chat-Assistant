@@ -44,9 +44,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-[60vh] lg:min-h-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ const LoginPage = () => {
             </span>
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
           <p className="text-gray-600 mb-8">
             Sign in to continue discovering great products on Jumia Ghana
           </p>
@@ -113,7 +113,7 @@ const LoginPage = () => {
               })}
             />
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -154,7 +154,7 @@ const LoginPage = () => {
           </div>
           <h2 className="text-3xl font-bold mb-4">AI-Powered Shopping</h2>
           <p className="text-blue-100">
-            Experience the future of online shopping with our intelligent assistant 
+            Experience the future of online shopping with our intelligent assistant
             that understands your needs and finds exactly what you're looking for.
           </p>
         </motion.div>

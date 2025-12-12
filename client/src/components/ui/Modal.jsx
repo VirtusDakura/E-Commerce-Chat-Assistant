@@ -8,7 +8,7 @@ const modalSizes = {
   md: 'max-w-lg',
   lg: 'max-w-2xl',
   xl: 'max-w-4xl',
-  full: 'max-w-full mx-4',
+  full: 'max-w-[calc(100%-2rem)] mx-4',
 };
 
 const Modal = ({
@@ -95,7 +95,7 @@ const Modal = ({
             )}
 
             {/* Content */}
-            <div className="px-6 py-4 max-h-[70vh] overflow-y-auto">
+            <div className="px-4 sm:px-6 py-4 max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] overflow-y-auto">
               {children}
             </div>
           </motion.div>

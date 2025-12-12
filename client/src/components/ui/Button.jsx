@@ -12,10 +12,10 @@ const buttonVariants = {
 };
 
 const buttonSizes = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
-  icon: 'p-2',
+  sm: 'px-2.5 py-1.5 text-xs sm:px-3 sm:text-sm',
+  md: 'px-3 py-2 text-sm sm:px-4 sm:text-base',
+  lg: 'px-4 py-2.5 text-base sm:px-6 sm:py-3 sm:text-lg',
+  icon: 'p-2 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center',
 };
 
 const Button = forwardRef(
@@ -37,10 +37,10 @@ const Button = forwardRef(
     const Comp = animate ? motion.button : 'button';
     const motionProps = animate
       ? {
-          whileHover: { scale: disabled ? 1 : 1.02 },
-          whileTap: { scale: disabled ? 1 : 0.98 },
-          transition: { duration: 0.2 },
-        }
+        whileHover: { scale: disabled ? 1 : 1.02 },
+        whileTap: { scale: disabled ? 1 : 0.98 },
+        transition: { duration: 0.2 },
+      }
       : {};
 
     return (

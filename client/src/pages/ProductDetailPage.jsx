@@ -70,7 +70,7 @@ const ProductDetailPage = () => {
     };
 
     fetchProduct();
-    
+
     return () => {
       isMounted = false;
     };
@@ -97,7 +97,7 @@ const ProductDetailPage = () => {
           console.error('Failed to sync cart with backend:', err);
         }
       }
-      
+
       toast.success('Added to Cart', `${product.name || product.title} added to cart`);
     }
   };
@@ -162,7 +162,7 @@ const ProductDetailPage = () => {
               {error || 'Product Not Found'}
             </h1>
             <p className="text-gray-600 mb-8">
-              This product may have been removed or the link is incorrect. 
+              This product may have been removed or the link is incorrect.
               Try chatting with our AI to find what you're looking for!
             </p>
             <div className="flex gap-3 justify-center">
@@ -206,8 +206,8 @@ const ProductDetailPage = () => {
         </motion.div>
 
         {/* Main Product Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 lg:p-8 mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
             {/* Image Gallery */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -235,7 +235,7 @@ const ProductDetailPage = () => {
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                 {productName}
               </h1>
 
@@ -247,13 +247,13 @@ const ProductDetailPage = () => {
               )}
 
               {/* Price */}
-              <div className="flex items-center gap-4">
-                <span className="text-3xl font-bold text-blue-600">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                <span className="text-2xl sm:text-3xl font-bold text-blue-600">
                   {formatPrice(product.price, product.currency || 'GHS')}
                 </span>
                 {product.originalPrice && product.originalPrice > product.price && (
                   <>
-                    <span className="text-xl text-gray-400 line-through">
+                    <span className="text-lg sm:text-xl text-gray-400 line-through">
                       {formatPrice(product.originalPrice, product.currency || 'GHS')}
                     </span>
                     <Badge variant="danger">
@@ -299,7 +299,7 @@ const ProductDetailPage = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <Button
                   size="lg"
                   className="flex-1"
@@ -308,16 +308,19 @@ const ProductDetailPage = () => {
                 >
                   {isInCart ? 'Added to Cart' : 'Add to Cart'}
                 </Button>
-                <Button
-                  size="lg"
-                  variant={isInWishlist ? 'primary' : 'outline'}
-                  onClick={handleToggleWishlist}
-                >
-                  <FiHeart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
-                </Button>
-                <Button size="lg" variant="outline">
-                  <FiShare2 className="w-5 h-5" />
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    size="lg"
+                    variant={isInWishlist ? 'primary' : 'outline'}
+                    onClick={handleToggleWishlist}
+                    aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                  >
+                    <FiHeart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
+                  </Button>
+                  <Button size="lg" variant="outline" aria-label="Share product">
+                    <FiShare2 className="w-5 h-5" />
+                  </Button>
+                </div>
               </div>
 
               {/* Buy on External Site */}
@@ -335,7 +338,7 @@ const ProductDetailPage = () => {
               {/* Notice */}
               <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                 <p className="text-sm text-blue-700">
-                  <strong>Note:</strong> This product is sold by {product.marketplace || 'Jumia'} Ghana. 
+                  <strong>Note:</strong> This product is sold by {product.marketplace || 'Jumia'} Ghana.
                   Clicking "Buy" will take you to the external marketplace to complete your purchase.
                 </p>
               </div>
@@ -345,9 +348,9 @@ const ProductDetailPage = () => {
 
         {/* Product Details */}
         {product.description && (
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Product Description</h2>
-            <p className="text-gray-600 whitespace-pre-line">{product.description}</p>
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Product Description</h2>
+            <p className="text-gray-600 whitespace-pre-line text-sm sm:text-base">{product.description}</p>
           </div>
         )}
 
