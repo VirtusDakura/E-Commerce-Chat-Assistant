@@ -142,7 +142,8 @@ const AboutPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {/* Horizontal scroll on mobile, grid on sm+ */}
+          <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 md:gap-8 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -150,15 +151,16 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                className="shrink-0 w-[220px] sm:w-auto snap-start"
               >
-                <Card variant="elevated" className="p-6 text-center h-full">
-                  <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-7 h-7 text-blue-600" />
+                <Card variant="elevated" className="p-5 sm:p-6 text-center h-full">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">{feature.description}</p>
+                  <p className="text-gray-600 text-xs sm:text-sm">{feature.description}</p>
                 </Card>
               </motion.div>
             ))}
@@ -181,7 +183,8 @@ const AboutPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
+          {/* Horizontal scroll on mobile, grid on sm+ */}
+          <div className="flex overflow-x-auto scrollbar-hide gap-6 pb-2 sm:grid sm:grid-cols-2 md:grid-cols-3 sm:gap-6 md:gap-8 sm:overflow-visible max-w-4xl mx-auto -mx-4 px-4 sm:mx-auto sm:px-0">
             {howWeHelp.map((item, index) => (
               <motion.div
                 key={item.title}
@@ -189,13 +192,13 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center"
+                className="text-center shrink-0 w-[200px] sm:w-auto snap-start"
               >
-                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <item.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-600 text-sm">{item.description}</p>
               </motion.div>
             ))}
           </div>

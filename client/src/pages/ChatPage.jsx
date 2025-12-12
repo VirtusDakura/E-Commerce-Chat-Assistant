@@ -345,12 +345,12 @@ const ChatPage = () => {
                 </p>
               </motion.div>
 
-              {/* Suggestion Cards */}
+              {/* Suggestion Cards - Horizontal scroll on mobile */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 max-w-2xl w-full px-2 sm:px-0"
+                className="flex overflow-x-auto scrollbar-hide gap-3 pb-2 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible max-w-2xl w-full -mx-4 px-4 sm:mx-0 sm:px-0"
               >
                 {suggestions.map((suggestion, index) => (
                   <motion.button
@@ -359,14 +359,14 @@ const ChatPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + index * 0.05 }}
                     onClick={() => sendMessage(suggestion.prompt)}
-                    className="flex items-start gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 text-left transition-colors group"
+                    className="flex items-start gap-3 p-3 sm:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 text-left transition-colors group shrink-0 w-[240px] sm:w-auto snap-start"
                   >
-                    <span className="text-2xl">{suggestion.icon}</span>
-                    <div>
-                      <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <span className="text-xl sm:text-2xl">{suggestion.icon}</span>
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors text-sm sm:text-base">
                         {suggestion.title}
                       </p>
-                      <p className="text-sm text-gray-500 line-clamp-1">
+                      <p className="text-xs sm:text-sm text-gray-500 line-clamp-1">
                         {suggestion.prompt}
                       </p>
                     </div>

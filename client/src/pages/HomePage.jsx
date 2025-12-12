@@ -221,7 +221,8 @@ const HomePage = () => {
             <p className="text-gray-600">Click any prompt to start shopping</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto">
+          {/* Horizontal scroll on mobile, grid on sm+ */}
+          <div className="flex overflow-x-auto scrollbar-hide gap-3 pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:overflow-visible max-w-5xl mx-auto -mx-4 px-4 sm:mx-auto sm:px-0">
             {samplePrompts.map((prompt, index) => (
               <motion.div
                 key={index}
@@ -229,12 +230,13 @@ const HomePage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                className="shrink-0 w-[280px] sm:w-auto snap-start"
               >
                 <Link
                   to={`/chat?prompt=${encodeURIComponent(prompt)}`}
-                  className="block"
+                  className="block h-full"
                 >
-                  <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-500">
+                  <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-500 h-full">
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                         <FiMessageCircle className="w-4 h-4 text-blue-600" />
@@ -266,7 +268,8 @@ const HomePage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {/* Grid layout - works better for step-based content */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {howItWorks.map((item, index) => (
               <motion.div
                 key={item.step}
@@ -283,29 +286,29 @@ const HomePage = () => {
 
                 <div className="relative text-center">
                   {/* Step Number */}
-                  <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center relative z-10 ${item.color === 'blue' ? 'bg-blue-100' :
-                      item.color === 'purple' ? 'bg-purple-100' :
-                        item.color === 'red' ? 'bg-red-100' :
-                          'bg-green-100'
+                  <div className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 mx-auto mb-3 sm:mb-4 lg:mb-6 rounded-full flex items-center justify-center relative z-10 ${item.color === 'blue' ? 'bg-blue-100' :
+                    item.color === 'purple' ? 'bg-purple-100' :
+                      item.color === 'red' ? 'bg-red-100' :
+                        'bg-green-100'
                     }`}>
-                    <item.icon className={`w-8 h-8 ${item.color === 'blue' ? 'text-blue-600' :
-                        item.color === 'purple' ? 'text-purple-600' :
-                          item.color === 'red' ? 'text-red-600' :
-                            'text-green-600'
+                    <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 ${item.color === 'blue' ? 'text-blue-600' :
+                      item.color === 'purple' ? 'text-purple-600' :
+                        item.color === 'red' ? 'text-red-600' :
+                          'text-green-600'
                       }`} />
-                    <span className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${item.color === 'blue' ? 'bg-blue-600' :
-                        item.color === 'purple' ? 'bg-purple-600' :
-                          item.color === 'red' ? 'bg-red-600' :
-                            'bg-green-600'
+                    <span className={`absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs lg:text-sm font-bold ${item.color === 'blue' ? 'bg-blue-600' :
+                      item.color === 'purple' ? 'bg-purple-600' :
+                        item.color === 'red' ? 'bg-red-600' :
+                          'bg-green-600'
                       }`}>
                       {item.step}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm hidden sm:block">
                     {item.description}
                   </p>
                 </div>
@@ -332,7 +335,8 @@ const HomePage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {/* Grid layout - 2 cols on mobile for better presentation */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -341,14 +345,14 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card variant="elevated" className="p-6 text-center h-full hover:shadow-xl transition-shadow">
-                  <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-7 h-7 text-blue-600" />
+                <Card variant="elevated" className="p-4 sm:p-5 lg:p-6 text-center h-full hover:shadow-xl transition-shadow">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4">
+                    <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm hidden sm:block">
                     {feature.description}
                   </p>
                 </Card>

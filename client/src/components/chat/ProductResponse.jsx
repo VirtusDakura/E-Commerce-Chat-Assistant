@@ -20,14 +20,15 @@ const ProductResponse = ({ message }) => {
           </p>
         )}
 
-        {/* Product Grid */}
+        {/* Product Grid - Horizontal scroll on mobile, grid on sm+ */}
         {products.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+          <div className="flex overflow-x-auto scrollbar-hide gap-3 pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3 lg:gap-4 sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0">
             {products.map((product) => (
-              <ChatProductCard
-                key={product.productId || product._id || product.id}
-                product={product}
-              />
+              <div key={product.productId || product._id || product.id} className="shrink-0 w-[260px] sm:w-auto snap-start">
+                <ChatProductCard
+                  product={product}
+                />
+              </div>
             ))}
           </div>
         )}
