@@ -104,22 +104,14 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
-            {/* Chat Button - Always Visible */}
-            <Link to="/chat">
+            {/* Chat Button - Desktop Only */}
+            <Link to="/chat" className="hidden sm:block">
               <Button
                 variant="primary"
                 size="sm"
-                className="hidden sm:flex"
                 leftIcon={<FiMessageCircle className="w-4 h-4" />}
               >
                 Chat
-              </Button>
-              <Button
-                variant="primary"
-                size="icon"
-                className="sm:hidden"
-              >
-                <FiMessageCircle className="w-5 h-5" />
               </Button>
             </Link>
 
