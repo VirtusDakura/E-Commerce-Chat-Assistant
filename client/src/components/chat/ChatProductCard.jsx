@@ -18,10 +18,10 @@ const formatPrice = (price, currency = 'GHS') => {
 const ChatProductCard = ({ product, compact = false }) => {
   const addToCartLocal = useCartStore((state) => state.addItem);
   const toggleWishlistLocal = useWishlistStore((state) => state.toggleItem);
-  const isInWishlist = useWishlistStore((state) => 
+  const isInWishlist = useWishlistStore((state) =>
     state.isInWishlist(product.productId || product._id)
   );
-  const isInCart = useCartStore((state) => 
+  const isInCart = useCartStore((state) =>
     state.isInCart(product.productId || product._id)
   );
 
@@ -93,16 +93,16 @@ const ChatProductCard = ({ product, compact = false }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
       >
         <img
           src={productImage}
           alt={productName}
-          className="w-16 h-16 object-cover rounded-lg"
+          className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg"
         />
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-gray-900 text-sm truncate">{productName}</h4>
-          <p className="text-blue-600 font-semibold">{formatPrice(productPrice, productCurrency)}</p>
+          <h4 className="font-medium text-gray-900 text-xs sm:text-sm truncate">{productName}</h4>
+          <p className="text-blue-600 font-semibold text-sm sm:text-base">{formatPrice(productPrice, productCurrency)}</p>
         </div>
         <div className="flex gap-1">
           <Button size="sm" variant="outline" onClick={handleAddToCart}>
@@ -182,9 +182,9 @@ const ChatProductCard = ({ product, compact = false }) => {
             {isInCart ? 'In Cart' : 'Add to Cart'}
           </Button>
           {productUrl && (
-            <Button 
-              size="sm" 
-              variant="outline" 
+            <Button
+              size="sm"
+              variant="outline"
               onClick={handleBuyNow}
               title="Buy on Jumia"
               className="text-orange-600 border-orange-300 hover:bg-orange-50"

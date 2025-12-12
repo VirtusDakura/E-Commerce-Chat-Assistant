@@ -56,9 +56,9 @@ const AboutPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">About ShopSmart AI</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">About ShopSmart AI</h1>
             <p className="text-lg text-blue-100">
-              Your intelligent shopping assistant that makes finding products on 
+              Your intelligent shopping assistant that makes finding products on
               Jumia Ghana as easy as having a conversation.
             </p>
           </motion.div>
@@ -79,18 +79,18 @@ const AboutPage = () => {
               </h2>
               <div className="space-y-4 text-gray-600">
                 <p>
-                  ShopSmart AI is an intelligent e-commerce assistant that helps you discover 
+                  ShopSmart AI is an intelligent e-commerce assistant that helps you discover
                   and shop for products on Jumia Ghana through natural conversation.
                 </p>
                 <p>
-                  Instead of browsing through endless product listings, simply tell our AI 
-                  what you're looking for - whether it's "a phone under 2000 GHS with good camera" 
-                  or "birthday gift ideas for a tech lover" - and get personalized recommendations 
+                  Instead of browsing through endless product listings, simply tell our AI
+                  what you're looking for - whether it's "a phone under 2000 GHS with good camera"
+                  or "birthday gift ideas for a tech lover" - and get personalized recommendations
                   instantly.
                 </p>
                 <p>
-                  Our AI searches Jumia Ghana's catalog in real-time, finding products that match 
-                  your needs, budget, and preferences. You can save items to your wishlist, 
+                  Our AI searches Jumia Ghana's catalog in real-time, finding products that match
+                  your needs, budget, and preferences. You can save items to your wishlist,
                   add them to cart, and purchase directly on Jumia's secure platform.
                 </p>
               </div>
@@ -142,7 +142,7 @@ const AboutPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -181,7 +181,7 @@ const AboutPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
             {howWeHelp.map((item, index) => (
               <motion.div
                 key={item.title}
@@ -215,8 +215,8 @@ const AboutPage = () => {
               Products from Jumia Ghana
             </h2>
             <p className="text-gray-600 mb-6">
-              All products displayed on ShopSmart AI are sourced directly from Jumia Ghana. 
-              When you're ready to purchase, you'll be directed to Jumia's secure platform 
+              All products displayed on ShopSmart AI are sourced directly from Jumia Ghana.
+              When you're ready to purchase, you'll be directed to Jumia's secure platform
               where you can complete your order with confidence.
             </p>
             <p className="text-sm text-gray-500">

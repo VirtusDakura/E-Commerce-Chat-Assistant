@@ -8,3 +8,5 @@ export { default as Toast, ToastContainer, useToast } from './Toast';
 export { default as Modal } from './Modal';
 export { default as Rating } from './Rating';
 export { default as Avatar } from './Avatar';
+export { default as PageContainer } from './PageContainer';
+export { default as ResponsiveGrid } from './ResponsiveGrid';

@@ -103,7 +103,7 @@ const Navbar = () => {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2 lg:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
             {/* Chat Button - Always Visible */}
             <Link to="/chat">
               <Button
@@ -124,7 +124,7 @@ const Navbar = () => {
             </Link>
 
             {/* Wishlist */}
-            <Link to="/wishlist" className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <Link to="/wishlist" className="relative p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors" aria-label="Wishlist">
               <FiHeart className="w-6 h-6" />
               {wishlistItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
@@ -134,7 +134,7 @@ const Navbar = () => {
             </Link>
 
             {/* Cart */}
-            <Link to="/cart" className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <Link to="/cart" className="relative p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors" aria-label="Shopping cart">
               <FiShoppingCart className="w-6 h-6" />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
@@ -174,7 +174,8 @@ const Navbar = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors"
+              className="lg:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors"
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {isMobileMenuOpen ? (
                 <FiX className="w-6 h-6" />

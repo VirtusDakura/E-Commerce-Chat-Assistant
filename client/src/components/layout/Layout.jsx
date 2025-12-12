@@ -8,7 +8,7 @@ const Layout = ({ showFooter = true }) => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <ScrollToTop />
       <Navbar />
-      <main className="flex-1 pt-20 lg:pt-24">
+      <main className="flex-1 pt-16 md:pt-20 lg:pt-24">
         <Outlet />
       </main>
       {showFooter && <Footer />}

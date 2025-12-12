@@ -47,7 +47,7 @@ const ChatPage = () => {
   const [loadingHistory, setLoadingHistory] = useState(false);
 
   const user = useAuthStore((state) => state.user);
-  
+
   const {
     messages,
     isTyping,
@@ -103,7 +103,7 @@ const ChatPage = () => {
 
   const sendMessage = useCallback(async (content) => {
     if (!content.trim()) return;
-    
+
     addUserMessage(content);
     setInputValue('');
     setTyping(true);
@@ -187,7 +187,7 @@ const ChatPage = () => {
           products: msg.suggestedProducts || [],
           timestamp: msg.metadata?.timestamp || new Date().toISOString(),
         })) || [];
-        
+
         clearMessages();
         setSessionId(sessionId);
         formattedMessages.forEach(msg => {
@@ -232,16 +232,16 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] flex bg-white overflow-hidden">
+    <div className="h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] flex bg-white overflow-hidden">
       {/* Sidebar */}
-      <div 
+      <div
         className={`
-          ${sidebarOpen ? 'w-72' : 'w-0'} 
+          ${sidebarOpen ? 'w-64 sm:w-72' : 'w-0'} 
           bg-gray-50 border-r border-gray-200 flex flex-col transition-all duration-300 overflow-hidden
-          fixed md:relative inset-y-0 left-0 z-40
+          fixed md:relative left-0 z-40
+          top-16 md:top-0 h-[calc(100%-4rem)] md:h-full
           ${sidebarOpen ? 'md:w-72' : 'md:w-0'}
         `}
-        style={{ top: 'inherit', height: '100%' }}
       >
         {/* Sidebar Content */}
         <div className="flex flex-col h-full w-72">
@@ -278,8 +278,8 @@ const ChatPage = () => {
                     onClick={() => loadConversation(chat.sessionId)}
                     className={`
                       group flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors
-                      ${currentSessionId === chat.sessionId 
-                        ? 'bg-blue-50 text-blue-700' 
+                      ${currentSessionId === chat.sessionId
+                        ? 'bg-blue-50 text-blue-700'
                         : 'text-gray-700 hover:bg-gray-100'}
                     `}
                   >
@@ -303,7 +303,7 @@ const ChatPage = () => {
 
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -314,7 +314,8 @@ const ChatPage = () => {
         {/* Toggle Sidebar Button */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute top-3 left-3 z-20 p-2 bg-white hover:bg-gray-100 rounded-lg shadow-sm border border-gray-200 transition-colors"
+          className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center bg-white hover:bg-gray-100 rounded-lg shadow-sm border border-gray-200 transition-colors"
+          aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {sidebarOpen ? (
             <FiChevronLeft className="w-5 h-5 text-gray-600" />
@@ -333,13 +334,13 @@ const ChatPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center mb-8"
               >
-                <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <FiShoppingBag className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-linear-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+                  <FiShoppingBag className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">
                   How can I help you shop today?
                 </h1>
-                <p className="text-gray-500 max-w-md">
+                <p className="text-gray-500 max-w-md text-sm sm:text-base">
                   I can help you find products, compare prices, and get the best deals from Jumia Ghana.
                 </p>
               </motion.div>
@@ -349,7 +350,7 @@ const ChatPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 max-w-2xl w-full px-2 sm:px-0"
               >
                 {suggestions.map((suggestion, index) => (
                   <motion.button
@@ -375,7 +376,7 @@ const ChatPage = () => {
             </div>
 
             {/* Input Area - Fixed at bottom */}
-            <div className="shrink-0 p-4 bg-white border-t border-gray-100">
+            <div className="shrink-0 p-3 sm:p-4 bg-white border-t border-gray-100">
               <div className="max-w-3xl mx-auto">
                 <form onSubmit={handleSubmit}>
                   <div className="flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
@@ -453,7 +454,7 @@ const ChatPage = () => {
             </div>
 
             {/* Input Area - Fixed at bottom, never scrolls */}
-            <div className="shrink-0 border-t border-gray-100 bg-white p-4">
+            <div className="shrink-0 border-t border-gray-100 bg-white p-3 sm:p-4">
               <div className="max-w-3xl mx-auto">
                 <form onSubmit={handleSubmit}>
                   <div className="flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
