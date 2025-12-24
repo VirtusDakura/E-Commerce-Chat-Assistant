@@ -1,0 +1,41 @@
+# =====================================================
+# RENDER DEPLOYMENT CONFIGURATION
+# =====================================================
+# This file configures automatic deployments on Render
+# See: https://render.com/docs/blueprint-spec
+# =====================================================
+
+services:
+  - type: web
+    name: ecommerce-chat-api
+    runtime: node
+    region: oregon
+    plan: free # Change to 'starter' or higher for production
+    
+    # Build Configuration
+    buildCommand: npm install
+    startCommand: node server.js
+    
+    # Health Check (Render will ping this to verify service is healthy)
+    healthCheckPath: /health
+    
+    # Environment Variables (set these in Render Dashboard)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false # Set manually in dashboard (contains secrets)
+      - key: JWT_SECRET
+        generateValue: true # Render will auto-generate a secret
+      - key: GEMINI_API_KEY
+        sync: false # Set manually in dashboard
+      - key: FRONTEND_URL
+        sync: false # Set to your Vercel URL
+    
+    # Auto-deploy on push to main branch
+    autoDeploy: true
+    
+    # Pull request previews (optional)
+    # pullRequestPreviewsEnabled: true
