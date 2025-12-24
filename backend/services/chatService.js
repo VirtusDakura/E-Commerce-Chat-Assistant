@@ -38,10 +38,14 @@ export async function processChat({ userId, message, sessionId }) {
   });
 
   // Process message with AI
-  console.log(`[ChatService] Processing message for user ${userId}: "${message}"`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[ChatService] Processing message for user ${userId}: "${message}"`);
+  }
   const aiResponse = await geminiAdapter.processMessage(message, conversationHistory);
 
-  console.log('[ChatService] AI Response:', JSON.stringify(aiResponse, null, 2));
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[ChatService] AI Response:', JSON.stringify(aiResponse, null, 2));
+  }
 
   let products = [];
   let productsWithDbIds = [];
@@ -49,7 +53,9 @@ export async function processChat({ userId, message, sessionId }) {
 
   // If AI wants to search products
   if (aiResponse.action === LLM_ACTIONS.SEARCH_PRODUCTS && aiResponse.query) {
-    console.log(`[ChatService] Triggering search for: "${aiResponse.query}"`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[ChatService] Triggering search for: "${aiResponse.query}"`);
+    }
 
     try {
       products = await searchProducts(aiResponse.query, {
@@ -58,7 +64,9 @@ export async function processChat({ userId, message, sessionId }) {
         limit: 12,
       });
 
-      console.log(`[ChatService] Found ${products.length} products`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[ChatService] Found ${products.length} products`);
+      }
 
       // Get products with DB IDs for cart/wishlist
       productsWithDbIds = await enrichProductsWithDbIds(products);
