@@ -28,16 +28,19 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:5174',
-  process.env.FRONTEND_URL, // Your Vercel production URL
+  'https://ai-ecom-chat-assistant.vercel.app', // Production frontend
+  process.env.FRONTEND_URL, // Your Vercel production URL (backup)
 ].filter(Boolean); // Remove undefined values
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, etc.) in development
-    if (!origin && process.env.NODE_ENV !== 'production') {
+    // Allow requests with no origin (health checks, mobile apps, Postman, server-to-server, etc.)
+    // These are safe because CORS only protects browser-based cross-origin requests
+    if (!origin) {
       return callback(null, true);
     }
 
+    // Check if origin is in allowed list
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else if (process.env.NODE_ENV !== 'production') {
