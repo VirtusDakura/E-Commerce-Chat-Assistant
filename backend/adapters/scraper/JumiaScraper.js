@@ -44,7 +44,9 @@ export class JumiaScraper extends BaseScraper {
       await this.throttleRequest();
 
       const searchUrl = this.buildSearchUrl(query, page);
-      console.log(`[JumiaScraper] Searching: ${searchUrl}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[JumiaScraper] Searching: ${searchUrl}`);
+      }
 
       const response = await this.retryWithBackoff(async () => {
         return await axios.get(searchUrl, {
@@ -60,7 +62,9 @@ export class JumiaScraper extends BaseScraper {
       const products = this.parseSearchResults(response.data);
       const limitedProducts = products.slice(0, limit);
 
-      console.log(`[JumiaScraper] Found ${limitedProducts.length} products for: ${query}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[JumiaScraper] Found ${limitedProducts.length} products for: ${query}`);
+      }
 
       return limitedProducts;
     } catch (error) {
