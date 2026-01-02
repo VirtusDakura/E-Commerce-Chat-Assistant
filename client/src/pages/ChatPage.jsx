@@ -314,7 +314,7 @@ const ChatPage = () => {
         {/* Toggle Sidebar Button */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center bg-white hover:bg-gray-100 rounded-lg shadow-sm border border-gray-200 transition-colors"
+          className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20 p-2 min-w-11 min-h-11 flex items-center justify-center bg-white hover:bg-gray-100 rounded-lg shadow-sm border border-gray-200 transition-colors"
           aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {sidebarOpen ? (
@@ -359,7 +359,7 @@ const ChatPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + index * 0.05 }}
                     onClick={() => sendMessage(suggestion.prompt)}
-                    className="flex items-start gap-3 p-3 sm:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 text-left transition-colors group shrink-0 w-[240px] sm:w-auto snap-start"
+                    className="flex items-start gap-3 p-3 sm:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 text-left transition-colors group shrink-0 w-60 sm:w-auto snap-start"
                   >
                     <span className="text-xl sm:text-2xl">{suggestion.icon}</span>
                     <div className="min-w-0">
